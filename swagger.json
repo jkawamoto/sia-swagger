@@ -1,0 +1,1001 @@
+{
+  "paths": {
+    "/host": {
+      "get": {
+        "description": "fetches status information about the host",
+        "tags": [
+          "Host"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "externalsettings": {
+                  "type": "object",
+                  "properties": {
+                    "acceptingcontracts": {
+                      "type": "boolean",
+                      "description": "Whether or not the host is accepting new contracts."
+                    },
+                    "maxdownloadbatchsize": {
+                      "type": "integer",
+                      "description": "The maximum size of a single download request from a renter. Each\ndownload request has multiple round trips of communication that\nexchange money. Larger batch sizes mean fewer round trips, but more\nfinancial risk for the host - the renter can get a free batch when\ndownloading by refusing to provide a signature.\n",
+                      "example": 17825792
+                    },
+                    "maxduration": {
+                      "type": "integer",
+                      "description": "The maximum duration that a host will allow for a file contract. The\nhost commits to keeping files for the full duration under the threat\nof facing a large penalty for losing or dropping data before the\nduration is complete. The storage proof window of an incoming file\ncontract must end before the current height + maxduration.\n",
+                      "example": 25920
+                    },
+                    "maxrevisebatchsize": {
+                      "type": "integer",
+                      "description": "The maximum size of a single batch of file contract revisions. The\nrenter can perform DoS attacks on the host by uploading a batch of\ndata then refusing to provide a signature to pay for the data. The\nhost can reduce this exposure by limiting the batch size. Larger\nbatch sizes allow for higher throughput as there is significant\ncommunication overhead associated with performing a batch upload.\n",
+                      "example": 17825792
+                    },
+                    "netaddress": {
+                      "type": "string",
+                      "description": "The IP address or hostname (including port) that the host should be contacted at.",
+                      "example": "123.456.789.0:9982"
+                    },
+                    "remainingstorage": {
+                      "type": "integer",
+                      "description": "The amount of unused storage capacity on the host in bytes. It should be noted that the host can lie.",
+                      "example": 35000000000
+                    },
+                    "totalstorage": {
+                      "type": "integer",
+                      "description": "The total amount of storage capacity on the host. It should be noted that the host can lie.",
+                      "example": 35000000000
+                    },
+                    "unlockhash": {
+                      "type": "string",
+                      "description": "The unlock hash is the address at which the host can be paid when forming file contracts.",
+                      "example": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab"
+                    },
+                    "windowsize": {
+                      "type": "integer",
+                      "description": "The storage proof window is the number of blocks that the host has\nto get a storage proof onto the blockchain. The window size is the\nminimum size of window that the host will accept in a file contract.\n",
+                      "example": 144
+                    },
+                    "collateral": {
+                      "type": "string",
+                      "description": "The maximum amount of money that the host will put up as collateral for storage that is contracted by the renter.",
+                      "example": 57870370370
+                    },
+                    "maxcollateral": {
+                      "type": "string",
+                      "description": "The maximum amount of collateral that the host will put into a single file contract.",
+                      "example": "1e+29"
+                    },
+                    "contractprice": {
+                      "type": "string",
+                      "description": "The price that a renter has to pay to create a contract with the\nhost. The payment is intended to cover transaction fees\nfor the file contract revision and the storage proof that the host\nwill be submitting to the blockchain.\n",
+                      "example": "3e+25"
+                    },
+                    "downloadbandwidthprice": {
+                      "type": "string",
+                      "description": "The price that a renter has to pay when downloading data from the host.",
+                      "example": 250000000000000
+                    },
+                    "storageprice": {
+                      "type": "string",
+                      "description": "The price that a renter has to pay to store files with the host.",
+                      "example": 231481481481
+                    },
+                    "uploadbandwidthprice": {
+                      "type": "string",
+                      "description": "The price that a renter has to pay when uploading data to the host.",
+                      "example": 100000000000000
+                    },
+                    "revisionnumber": {
+                      "type": "integer",
+                      "description": "The revision number indicates to the renter what iteration of\nsettings the host is currently at. Settings are generally signed.\nIf the renter has multiple conflicting copies of settings from the\nhost, the renter can expect the one with the higher revision number\nto be more recent.\n",
+                      "example": 0
+                    },
+                    "version": {
+                      "type": "string",
+                      "description": "The version of external settings being used. This field helps coordinate updates while preserving compatibility with older nodes.",
+                      "example": "1.0.0"
+                    }
+                  }
+                },
+                "financialmetrics": {
+                  "type": "object",
+                  "description": "The financial status of the host.",
+                  "properties": {
+                    "contractcount": {
+                      "type": "integer",
+                      "description": "Number of open file contracts.",
+                      "example": 2
+                    },
+                    "contractcompensation": {
+                      "type": "string",
+                      "description": "The amount of money that renters have given to the host to pay for\nfile contracts. The host is required to submit a file contract\nrevision and a storage proof for every file contract that gets created,\nand the renter pays for the miner fees on these objects.\n",
+                      "example": 123
+                    },
+                    "potentialcontractcompensation": {
+                      "type": "string",
+                      "description": "The amount of money that renters have given to the host to pay for\nfile contracts which have not been confirmed yet. The potential\ncompensation becomes compensation after the storage proof is\nsubmitted.\n",
+                      "example": 123
+                    },
+                    "lockedstoragecollateral": {
+                      "type": "string",
+                      "description": "The amount of storage collateral which the host has tied up in file\ncontracts. The host has to commit collateral to a file contract even\nif there is no storage, but the locked collateral will be returned\neven if the host does not submit a storage proof - the collateral is\nnot at risk, it is merely set aside so that it can be put at risk\nlater.\n",
+                      "example": 123
+                    },
+                    "lostrevenue": {
+                      "type": "string",
+                      "description": "The amount of revenue, including storage revenue and bandwidth\nrevenue, that has been lost due to failed file contracts and\nfailed storage proofs.\n",
+                      "example": 123
+                    },
+                    "loststoragecollateral": {
+                      "type": "string",
+                      "description": "The amount of collateral that was put up to protect data which has been lost due to failed file contracts and missed storage proofs.",
+                      "example": 123
+                    },
+                    "potentialstoragerevenue": {
+                      "type": "string",
+                      "description": "The amount of revenue that the host stands to earn if all storage proofs are submitted corectly and in time.",
+                      "example": 123
+                    },
+                    "riskedstoragecollateral": {
+                      "type": "string",
+                      "description": "The amount of money that the host has risked on file contracts. If\nthe host starts missing storage proofs, the host can forfeit up to\nthis many coins. In the event of a missed storage proof, locked\nstorage collateral gets returned, but risked storage collateral\ndoes not get returned.\n",
+                      "example": 123
+                    },
+                    "storagerevenue": {
+                      "type": "string",
+                      "description": "The amount of money that the host has earned from storing data. This money has been locked down by successful storage proofs.",
+                      "example": 123
+                    },
+                    "transactionfeeexpenses": {
+                      "type": "string",
+                      "description": "The amount of money that the host has spent on transaction fees when\nsubmitting host announcements, file contract revisions, and storage\nproofs.\n",
+                      "example": 123
+                    },
+                    "downloadbandwidthrevenue": {
+                      "type": "string",
+                      "description": "The amount of money that the host has made from renters downloading\ntheir files. This money has been locked in by successsful storage\nproofs.\n",
+                      "example": 123
+                    },
+                    "potentialdownloadbandwidthrevenue": {
+                      "type": "string",
+                      "description": "The amount of money that the host stands to make from renters that\ndownloaded their files. The host will only realize this revenue if\nthe host successfully submits storage proofs for the related file\ncontracts.\n",
+                      "example": 123
+                    },
+                    "potentialuploadbandwidthrevenue": {
+                      "type": "string",
+                      "description": "The amount of money that the host stands to make from renters that\nuploaded files. The host will only realize this revenue if the host\nsuccessfully submits storage proofs for the related file contracts.\n",
+                      "example": 123
+                    },
+                    "uploadbandwidthrevenue": {
+                      "type": "string",
+                      "description": "The amount of money that the host has made from renters uploading\ntheir files. This money has been locked in by successful storage\nproofs.\n",
+                      "example": 123
+                    }
+                  }
+                },
+                "internalsettings": {
+                  "type": "object",
+                  "description": "The settings of the host. Most interactions between the user and the host occur by changing the internal settings.",
+                  "properties": {
+                    "acceptingcontracts": {
+                      "type": "boolean",
+                      "description": "When set to true, the host will accept new file contracts if the\nterms are reasonable. When set to false, the host will not accept new\nfile contracts at all.\n",
+                      "example": true
+                    },
+                    "maxdownloadbatchsize": {
+                      "type": "integer",
+                      "description": "The maximum size of a single download request from a renter. Each\ndownload request has multiple round trips of communication that\nexchange money. Larger batch sizes mean fewer round trips, but more\nfinancial risk for the host - the renter can get a free batch when\ndownloading by refusing to provide a signature.\n",
+                      "example": 17825792
+                    },
+                    "maxduration": {
+                      "type": "integer",
+                      "description": "The maximum duration of a file contract that the host will accept.\nThe storage proof window must end before the current height +\nmaxduration.\n",
+                      "example": 25920
+                    },
+                    "maxrevisebatchsize": {
+                      "type": "integer",
+                      "description": "The maximum size of a single batch of file contract revisions. The\nrenter can perform DoS attacks on the host by uploading a batch of\ndata then refusing to provide a signature to pay for the data. The\nhost can reduce this exposure by limiting the batch size. Larger\nbatch sizes allow for higher throughput as there is significant\ncommunication overhead associated with performing a batch upload.\n",
+                      "example": 17825792
+                    },
+                    "netaddress": {
+                      "type": "string",
+                      "description": "The IP address or hostname (including port) that the host should be\ncontacted at. If left blank, the host will automatically figure out\nits ip address and use that. If given, the host will use the address\ngiven.\n",
+                      "example": "123.456.789.0:9982"
+                    },
+                    "windowsize": {
+                      "type": "integer",
+                      "description": "The storage proof window is the number of blocks that the host has\nto get a storage proof onto the blockchain. The window size is the\nminimum size of window that the host will accept in a file contract.\n",
+                      "example": 144
+                    },
+                    "collateral": {
+                      "type": "string",
+                      "description": "The maximum amount of money that the host will put up as collateral per byte per block of storage that is contracted by the renter.",
+                      "example": 57870370370
+                    },
+                    "collateralbudget": {
+                      "type": "string",
+                      "description": "The total amount of money that the host will allocate to collateral across all file contracts.",
+                      "example": "2000000000000000000000000000000"
+                    },
+                    "maxcollateral": {
+                      "type": "string",
+                      "description": "The maximum amount of collateral that the host will put into a single file contract.",
+                      "example": "100000000000000000000000000000"
+                    },
+                    "mincontractprice": {
+                      "type": "string",
+                      "description": "The minimum price that the host will demand from a renter when\nforming a contract. Typically this price is to cover transaction\nfees on the file contract revision and storage proof, but can also\nbe used if the host has a low amount of collateral. The price is a\nminimum because the host may automatically adjust the price upwards\nin times of high demand.\n",
+                      "example": "30000000000000000000000000"
+                    },
+                    "mindownloadbandwidthprice": {
+                      "type": "string",
+                      "description": "The minimum price that the host will demand from a renter when the\nrenter is downloading data. If the host is saturated, the host may\nincrease the price from the minimum.\n",
+                      "example": "250000000000000"
+                    },
+                    "minstorageprice": {
+                      "type": "string",
+                      "description": "The minimum price that the host will demand when storing data for\nextended periods of time. If the host is low on space, the price of\nstorage may be set higher than the minimum.\n",
+                      "example": "231481481481"
+                    },
+                    "minuploadbandwidthprice": {
+                      "type": "string",
+                      "description": "The minimum price that the host will demand from a renter when the\nrenter is uploading data. If the host is saturated, the host may\nincrease the price from the minimum.\n",
+                      "example": "100000000000000"
+                    }
+                  }
+                },
+                "networkmetrics": {
+                  "description": "Information about the network, specifically various ways in which renters have contacted the host.",
+                  "type": "object",
+                  "properties": {
+                    "downloadcalls": {
+                      "type": "integer",
+                      "description": "The number of times that a renter has attempted to download something from the host.",
+                      "example": 0
+                    },
+                    "errorcalls": {
+                      "type": "integer",
+                      "description": "The number of calls that have resulted in errors. A small number of\nerrors are expected, but a large number of errors indicate either\nbuggy software or malicious network activity. Usually buggy\nsoftware.\n",
+                      "example": 1
+                    },
+                    "formcontractcalls": {
+                      "type": "integer",
+                      "description": "The number of times that a renter has tried to form a contract with the host.",
+                      "example": 2
+                    },
+                    "renewcalls": {
+                      "type": "integer",
+                      "description": "The number of times that a renter has tried to renew a contract with the host.",
+                      "example": 3
+                    },
+                    "revisecalls": {
+                      "type": "integer",
+                      "description": "The number of times that the renter has tried to revise a contract with the host.",
+                      "example": 4
+                    },
+                    "settingscalls": {
+                      "type": "integer",
+                      "description": "The number of times that a renter has queried the host for the\nhosts settings. The settings include the price of bandwidth, which\nis a price that can adjust every few minutes. This value is usually\nvery high compared to the others.\n",
+                      "example": 5
+                    },
+                    "unrecognizedcalls": {
+                      "type": "integer",
+                      "description": "The number of times that a renter has attempted to use an unrecognized call. Larger numbers typically indicate buggy software.",
+                      "example": 6
+                    }
+                  }
+                },
+                "connectabilitystatus": {
+                  "type": "string",
+                  "description": "connectabilitystatus is one of \"checking\", \"connectable\",\nor \"not connectable\", and indicates if the host can connect to\nitself on its configured NetAddress.\n",
+                  "example": "checking"
+                },
+                "workingstatus": {
+                  "type": "string",
+                  "description": "workingstatus is one of \"checking\", \"working\", or \"not working\"\nand indicates if the host is being actively used by renters.\n",
+                  "example": "checking"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "configures hosting parameters. All parameters are optional; unspecified parameters will be left unchanged.",
+        "tags": [
+          "Host"
+        ],
+        "parameters": [
+          {
+            "name": "acceptingcontracts",
+            "description": "When set to true, the host will accept new file contracts if the\nterms are reasonable. When set to false, the host will not accept new\nfile contracts at all.\n",
+            "in": "query",
+            "type": "boolean",
+            "required": false
+          },
+          {
+            "name": "maxdownloadbatchsize",
+            "description": "The maximum size of a single download request from a renter. Each\ndownload request has multiple round trips of communication that\nexchange money. Larger batch sizes mean fewer round trips, but more\nfinancial risk for the host - the renter can get a free batch when\ndownloading by refusing to provide a signature.\n",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "maxduration",
+            "description": "The maximum duration of a file contract that the host will accept.\nThe storage proof window must end before the current height +\nmaxduration.\n",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "maxrevisebatchsize",
+            "description": "The maximum size of a single batch of file contract revisions. The\nrenter can perform DoS attacks on the host by uploading a batch of\ndata then refusing to provide a signature to pay for the data. The\nhost can reduce this exposure by limiting the batch size. Larger\nbatch sizes allow for higher throughput as there is significant\ncommunication overhead associated with performing a batch upload.\n",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "netaddress",
+            "description": "The IP address or hostname (including port) that the host should be\ncontacted at. If left blank, the host will automatically figure out\nits ip address and use that. If given, the host will use the address\ngiven.\n",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "windowsize",
+            "description": "The storage proof window is the number of blocks that the host has\nto get a storage proof onto the blockchain. The window size is the\nminimum size of window that the host will accept in a file contract.\n",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "collateral",
+            "description": "The maximum amount of money that the host will put up as collateral per byte per block of storage that is contracted by the renter.",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "collateralbudget",
+            "description": "The total amount of money that the host will allocate to collateral across all file contracts.",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "maxcollateral",
+            "description": "The maximum amount of collateral that the host will put into a single file contract.",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "mincontractprice",
+            "description": "The minimum price that the host will demand from a renter when\nforming a contract. Typically this price is to cover transaction\nfees on the file contract revision and storage proof, but can also\nbe used if the host has a low amount of collateral. The price is a\nminimum because the host may automatically adjust the price upwards\nin times of high demand.\n",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "mindownloadbandwidthprice",
+            "description": "The minimum price that the host will demand from a renter when the\nrenter is downloading data. If the host is saturated, the host may\nincrease the price from the minimum.\n",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "minstorageprice",
+            "description": "The minimum price that the host will demand when storing data for\nextended periods of time. If the host is low on space, the price of\nstorage may be set higher than the minimum.\n",
+            "in": "query",
+            "type": "string",
+            "required": false
+          },
+          {
+            "name": "minuploadbandwidthprice",
+            "description": "The minimum price that the host will demand from a renter when the\nrenter is uploading data. If the host is saturated, the host may\nincrease the price from the minimum.\n",
+            "in": "query",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/host/announce": {
+      "post": {
+        "description": "Announce the host to the network as a source of storage. Generally only needs to be called once.",
+        "tags": [
+          "Host"
+        ],
+        "parameters": [
+          {
+            "name": "netaddress",
+            "type": "string",
+            "description": "The address to be announced. If no address is provided, the automatically discovered address will be used instead.",
+            "required": false,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/host/storage": {
+      "get": {
+        "description": "gets a list of folders tracked by the host's storage manager.",
+        "tags": [
+          "Host"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "folders": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "example": "/home/foo/bar",
+                        "description": "Absolute path to the storage folder on the local filesystem."
+                      },
+                      "capacity": {
+                        "type": "integer",
+                        "description": "Maximum capacity of the storage folder. The host will not store more\nthan this many bytes in the folder. This capacity is not checked\nagainst the drive's remaining capacity. Therefore, you must manually\nensure the disk has sufficient capacity for the folder at all times.\nOtherwise you risk losing renter's data and failing storage proofs.\n",
+                        "example": 50000000000
+                      },
+                      "capacityremaining": {
+                        "type": "integer",
+                        "description": "Unused capacity of the storage folder.",
+                        "example": 100000
+                      },
+                      "failedreads": {
+                        "type": "integer",
+                        "description": "Number of failed disk read & write operations. A large number of\nfailed reads or writes indicates a problem with the filesystem or\ndrive's hardware.\n",
+                        "example": 1
+                      },
+                      "failedwrites": {
+                        "type": "integer",
+                        "example": 0
+                      },
+                      "successfulreads": {
+                        "type": "integer",
+                        "description": "Number of successful read & write operations.",
+                        "example": 2
+                      },
+                      "successfulwrites": {
+                        "type": "integer",
+                        "example": 3
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/host/storage/folders/add": {
+      "post": {
+        "description": "adds a storage folder to the manager. The manager may not check that there is enough space available on-disk to support as much storage as requested",
+        "tags": [
+          "Host"
+        ],
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "description": "Local path on disk to the storage folder to add.",
+            "in": "query",
+            "required": true
+          },
+          {
+            "name": "size",
+            "type": "integer",
+            "description": "Initial capacity of the storage folder. This value isn't validated so it is possible to set the capacity of the storage folder greater than the capacity of the disk. Do not do this. in: query\n",
+            "required": true,
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/host/storage/folders/remove": {
+      "post": {
+        "description": "Remove a storage folder from the manager. All storage on the folder will be moved to other storage folders, meaning that no data will be lost. If the manager is unable to save data, an error will be returned and the operation will be stopped. \n",
+        "tags": [
+          "Host"
+        ],
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "in": "query",
+            "required": true,
+            "description": "Local path on disk to the storage folder to remove."
+          },
+          {
+            "name": "force",
+            "type": "boolean",
+            "in": "query",
+            "required": false,
+            "description": "If `force` is true, the storage folder will be removed even if the data in\nthe storage folder cannot be moved to other storage folders, typically\nbecause they don't have sufficient capacity. If `force` is true and the data\ncannot be moved, data will be lost.\n"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/host/storage/folders/resize": {
+      "post": {
+        "description": "grows or shrink a storage folder in the manager. The manager may not check that there is enough space on-disk to support growing the storage folder, but should gracefully handle running out of space unexpectedly. When shrinking a storage folder, any data in the folder that needs to be moved will be placed into other storage folders, meaning that no data will be lost. If the manager is unable to migrate the data, an error will be returned and the operation will be stopped.\n",
+        "tags": [
+          "Host"
+        ],
+        "parameters": [
+          {
+            "name": "path",
+            "type": "string",
+            "in": "query",
+            "required": true,
+            "description": "Local path on disk to the storage folder to resize."
+          },
+          {
+            "name": "newsize",
+            "type": "integer",
+            "in": "query",
+            "required": true,
+            "description": "Desired new size of the storage folder. This will be the new capacity of the storage folder."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/daemon/constants": {
+      "get": {
+        "tags": [
+          "Daemon"
+        ],
+        "description": "Returns the set of constants in use.",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "genesistimestamp": {
+                  "type": "integer",
+                  "example": 1433600000,
+                  "description": "Timestamp of the genesis block."
+                },
+                "blocksizelimit": {
+                  "type": "integer",
+                  "example": 2000000,
+                  "description": "Maximum size, in bytes, of a block. Blocks larger than this will be\nrejected by peers.\n"
+                },
+                "blockfrequency": {
+                  "type": "integer",
+                  "example": 600,
+                  "description": "Target for how frequently new blocks should be mined."
+                },
+                "extremefuturethreshold": {
+                  "type": "integer",
+                  "example": 10800,
+                  "description": "Farthest a block's timestamp can be in the future before the block is\nrejected outright.\n"
+                },
+                "targetwindow": {
+                  "type": "integer",
+                  "example": 1000,
+                  "description": "Height of the window used to adjust the difficulty."
+                },
+                "mediantimestampwindow": {
+                  "type": "integer",
+                  "example": 11,
+                  "description": "Duration of the window used to adjust the difficulty."
+                },
+                "futurethreshold": {
+                  "type": "integer",
+                  "example": 10800,
+                  "description": "How far in the future a block can be without being rejected. A block\nfurther into the future will not be accepted immediately, but the daemon\nwill attempt to accept the block as soon as it is valid.\n"
+                },
+                "siafundcount": {
+                  "type": "integer",
+                  "example": 10000,
+                  "description": "Total number of siafunds."
+                },
+                "siafundportion": {
+                  "type": "string",
+                  "example": "39/1000",
+                  "description": "Fraction of each file contract payout given to siafund holders."
+                },
+                "maturitydelay": {
+                  "type": "integer",
+                  "example": 144,
+                  "description": "Number of children a block must have before it is considered \"mature.\"\n"
+                },
+                "initialcoinbase": {
+                  "type": "integer",
+                  "example": 300000,
+                  "description": "Number of coins given to the miner of the first block. Note that elsewhere\nin the API currency is typically returned in hastings and as a bignum.\nThis is not the case here.\n"
+                },
+                "minimumcoinbase": {
+                  "type": "integer",
+                  "example": 30000,
+                  "description": "Minimum number of coins paid out to the miner of a block (the coinbase\ndecreases with each block). Note that elsewhere in the API currency is\ntypically returned in hastings and as a bignum. This is not the case\nhere.\n"
+                },
+                "roottarget": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  },
+                  "description": "Initial target"
+                },
+                "rootdepth": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  },
+                  "description": "Initial depth"
+                },
+                "maxadjustmentup": {
+                  "type": "string",
+                  "example": "5/2",
+                  "description": "Largest allowed ratio between the old difficulty and the new difficulty."
+                },
+                "maxadjustmentdown": {
+                  "type": "string",
+                  "example": "2/5",
+                  "description": "Smallest allowed ratio between the old difficulty and the new difficulty."
+                },
+                "siacoinprecision": {
+                  "type": "string",
+                  "example": "1e+24",
+                  "description": "Number of Hastings in one siacoin."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/daemon/stop": {
+      "get": {
+        "tags": [
+          "Daemon"
+        ],
+        "description": "cleanly shuts down the daemon. May take a few seconds.",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/daemon/version": {
+      "get": {
+        "tags": [
+          "Daemon"
+        ],
+        "description": "returns the version of the Sia daemon currently running.",
+        "responses": {
+          "200": {
+            "description": "returns the version of the Sia daemon currently running.",
+            "schema": {
+              "properties": {
+                "version": {
+                  "type": "string",
+                  "example": "1.0.0",
+                  "description": "Version number of the running Sia Daemon. This number is visible to its\npeers on the network.\n"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/consensus": {
+      "get": {
+        "description": "returns information about the consensus set, such as the current block height.",
+        "tags": [
+          "Consensus"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "synced": {
+                  "type": "boolean",
+                  "description": "True if the consensus set is synced with the network, i.e. it has downloaded the entire blockchain."
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "Number of blocks preceding the current block.",
+                  "example": 62248
+                },
+                "currentblock": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/consensus/validate/transactionset": {
+      "post": {
+        "tags": [
+          "Consensus"
+        ],
+        "description": "validates a set of transactions using the current utxo set.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/gateway": {
+      "get": {
+        "tags": [
+          "Gateway"
+        ],
+        "description": "returns information about the gateway, including the list of connected peers.",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "netaddress": {
+                  "type": "string",
+                  "description": "netaddress is the network address of the gateway as seen by the rest of\nthe network. The address consists of the external IP address and the\nport Sia is listening on. It represents a `modules.NetAddress`.\n"
+                },
+                "peers": {
+                  "type": "array",
+                  "description": "peers is an array of peers the gateway is connected to. It represents an array of `modules.Peer`s.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "netaddress": {
+                        "type": "string",
+                        "description": "netaddress is the address of the peer. It represents a `modules.NetAddress`."
+                      },
+                      "version": {
+                        "type": "string",
+                        "description": "version is the version number of the peer."
+                      },
+                      "inbound": {
+                        "type": "boolean",
+                        "description": "inbound is true when the peer initiated the connection. This field\nis exposed as outbound peers are generally trusted more than inbound\npeers, as inbound peers are easily manipulated by an adversary.\n"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/gateway/connect/{netaddress}": {
+      "post": {
+        "description": "connects the gateway to a peer. The peer is added to the node list if it is not already present. The node list is the list of all nodes the gateway knows about, but is not necessarily connected to.",
+        "tags": [
+          "Gateway"
+        ],
+        "parameters": [
+          {
+            "name": "netaddress",
+            "description": "address of the peer to connect to. It should be a\nreachable ip address and port number, of the form IP:port. IPV6 addresses\nmust be enclosed in square brackets.\n",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/gateway/disconnect/{netaddress}": {
+      "post": {
+        "description": "disconnects the gateway from a peer. The peer remains in the node list. Disconnecting from a peer does not prevent the gateway from automatically connecting to the peer in the future.",
+        "tags": [
+          "Gateway"
+        ],
+        "parameters": [
+          {
+            "name": "netaddress",
+            "description": "address of the peer to connect to. It should be a reachable ip address and port number, of the form IP:port. IPV6 addresses must be enclosed in square brackets.\n",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    }
+  },
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Sia"
+  },
+  "schemes": [
+    "http"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "tags": [
+    {
+      "name": "Daemon",
+      "description": "The daemon is responsible for starting and stopping the modules which make up the rest of Sia. It also provides endpoints for viewing build constants.\n",
+      "externalDocs": {
+        "description": "GitHub",
+        "url": "https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Daemon.md"
+      }
+    },
+    {
+      "name": "Consensus",
+      "description": "The consensus set manages everything related to consensus and keeps the blockchain in sync with the rest of the network. The consensus set's API endpoint returns information about the state of the blockchain.\n",
+      "externalDocs": {
+        "description": "GitHub",
+        "url": "https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Consensus.md"
+      }
+    },
+    {
+      "name": "Gateway",
+      "description": "The gateway maintains a peer to peer connection to the network and provides a method for calling RPCs on connected peers. The gateway's API endpoints expose methods for viewing the connected peers, manually connecting to peers, and manually disconnecting from peers. The gateway may connect or disconnect from peers on its own.\n",
+      "externalDocs": {
+        "description": "GitHub",
+        "url": "https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Gateway.md"
+      }
+    },
+    {
+      "name": "Host",
+      "description": "The host provides storage from local disks to the network. The host negotiates file contracts with remote renters to earn money for storing other users' files. The host's endpoints expose methods for viewing and modifying host settings, announcing to the network, and managing how files are stored on disk.\n",
+      "externalDocs": {
+        "description": "GitHub",
+        "url": "https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Host.md"
+      }
+    }
+  ],
+  "definitions": {
+    "StandardError": {
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
