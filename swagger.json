@@ -611,6 +611,364 @@
         }
       }
     },
+    "/host/storage/sectors/delete/{merkleroot}": {
+      "post": {
+        "description": "deletes a sector, meaning that the manager will be unable to upload that sector and be unable to provide a storage proof on that sector. \nThis endpoint is for removing the data entirely, and will remove instances of the sector appearing at all heights. \nThe primary purpose is to comply with legal requests to remove data.\n",
+        "tags": [
+          "Host"
+        ],
+        "parameters": [
+          {
+            "name": "merkleroot",
+            "type": "string",
+            "in": "path",
+            "required": true,
+            "description": "Merkleroot of the sector to delete."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/hostdb/active": {
+      "get": {
+        "description": "lists all of the active hosts known to the renter, sorted by preference.\n",
+        "tags": [
+          "HostDB"
+        ],
+        "parameters": [
+          {
+            "name": "numhosts",
+            "type": "integer",
+            "description": "Number of hosts to return. The actual number of hosts returned may be less if there are insufficient active hosts. Optional, the default is all active hosts.",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "$ref": "#/definitions/Hostdb"
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/hostdb/all": {
+      "get": {
+        "description": "lists all of the hosts known to the renter. Hosts are not guaranteed to be in any particular order, and the order may change in subsequent calls.\n",
+        "tags": [
+          "HostDB"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "$ref": "#/definitions/Hostdb"
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/hostdb/hosts/{pubkey}": {
+      "get": {
+        "description": "fetches detailed information about a particular host, including metrics regarding the score of the host within the database. It should be noted that each renter uses different metrics for selecting hosts, and that a good score on in one hostdb does not mean that the host will be successful on the network overall.\n",
+        "tags": [
+          "HostDB"
+        ],
+        "parameters": [
+          {
+            "name": "pubkey",
+            "in": "path",
+            "description": "The public key of the host. Each public key identifies a single host.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "entry": {
+                  "type": "object",
+                  "properties": {
+                    "acceptingcontracts": {
+                      "type": "boolean",
+                      "description": "true if the host is accepting new contracts.",
+                      "example": true
+                    },
+                    "maxdownloadbatchsize": {
+                      "type": "integer",
+                      "description": "Maximum number of bytes that the host will allow to be requested by a single download request.",
+                      "example": 17825792
+                    },
+                    "maxduration": {
+                      "type": "integer",
+                      "description": "Maximum duration in blocks that a host will allow for a file contract.\nThe host commits to keeping files for the full duration under the\nthreat of facing a large penalty for losing or dropping data before\nthe duration is complete. The storage proof window of an incoming file\ncontract must end before the current height + maxduration.\nThere is a block approximately every 10 minutes.\ne.g. 1 day = 144 blocks\n",
+                      "example": 25920
+                    },
+                    "maxrevisebatchsize": {
+                      "type": "integer",
+                      "description": "Maximum size in bytes of a single batch of file contract\nrevisions. Larger batch sizes allow for higher throughput as there is\nsignificant communication overhead associated with performing a batch\nupload.\n",
+                      "example": 17825792
+                    },
+                    "netaddress": {
+                      "type": "string",
+                      "description": "Remote address of the host. It can be an IPv4, IPv6, or hostname, along with the port. IPv6 addresses are enclosed in square brackets.",
+                      "example": "123.456.789.0:9982"
+                    },
+                    "remainingstorage": {
+                      "type": "integer",
+                      "description": "Unused storage capacity the host claims it has, in bytes.",
+                      "example": 35000000000
+                    },
+                    "sectorsize": {
+                      "type": "integer",
+                      "description": "Smallest amount of data in bytes that can be uploaded or downloaded to or from the host.",
+                      "example": 4194304
+                    },
+                    "totalstorage": {
+                      "type": "integer",
+                      "description": "Total amount of storage capacity the host claims it has, in bytes.",
+                      "example": 35000000000
+                    },
+                    "unlockhash": {
+                      "type": "string",
+                      "description": "Address at which the host can be paid when forming file contracts.",
+                      "example": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab"
+                    },
+                    "windowsize": {
+                      "type": "integer",
+                      "description": "A storage proof window is the number of blocks that the host has to\nget a storage proof onto the blockchain. The window size is the\nminimum size of window that the host will accept in a file contract.\n",
+                      "example": 144
+                    },
+                    "publickey": {
+                      "type": "object",
+                      "description": "Public key used to identify and verify hosts.",
+                      "properties": {
+                        "algorithm": {
+                          "type": "string",
+                          "description": "Algorithm used for signing and verification. Typically \"ed25519\".",
+                          "example": "ed25519"
+                        },
+                        "key": {
+                          "type": "string",
+                          "description": "Key used to verify signed host messages.",
+                          "example": "RW50cm9weSBpc24ndCB3aGF0IGl0IHVzZWQgdG8gYmU="
+                        }
+                      }
+                    },
+                    "publickeystring": {
+                      "type": "string",
+                      "description": "The string representation of the full public key, used when calling /hostdb/hosts.",
+                      "example": "ed25519:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+                    },
+                    "scorebreakdown": {
+                      "type": "object",
+                      "description": "A set of scores as determined by the renter. Generally, the host's final\nfinal score is all of the values multiplied together. Modified renters may\nhave additional criteria that they use to judge a host, or may ignore\ncertin criteia. In general, these fields should only be used as a loose\nguide for the score of a host, as every renter sees the world differently\nand uses different metrics to evaluate hosts.\n",
+                      "properties": {
+                        "score": {
+                          "type": "integer",
+                          "description": "The overall score for the host. Scores are entriely relative, and are\nconsistent only within the current hostdb. Between different machines,\ndifferent configurations, and different versions the absolute scores for\na given host can be off by many orders of magnitude. When displaying to a\nhuman, some form of normalization with respect to the other hosts (for\nexample, divide all scores by the median score of the hosts) is\nrecommended.\n",
+                          "example": 123456
+                        },
+                        "ageadjustment": {
+                          "type": "integer",
+                          "description": "The multiplier that gets applied to the host based on how long it has been a host. Older hosts typically have a lower penalty.",
+                          "example": 0.1234
+                        },
+                        "burnadjustment": {
+                          "type": "integer",
+                          "description": "The multiplier that gets applied to the host based on how much proof-of-burn the host has performed. More burn causes a linear increase in score.",
+                          "example": 23.456
+                        },
+                        "collateraladjustment": {
+                          "type": "integer",
+                          "description": "The multiplier that gets applied to a host based on how much collateral the host is offering. More collateral is typically better, though above a point it can be detrimental.",
+                          "example": 23.456
+                        },
+                        "priceadjustment": {
+                          "type": "integer",
+                          "description": "The multiplier that gets applied to a host based on the host's price. Lower prices are almost always better. Below a certain, very low price, there is no advantage.",
+                          "example": 0.1234
+                        },
+                        "storageremainingadjustment": {
+                          "type": "integer",
+                          "description": "The multiplier that gets applied to a host based on how much storage is remaining for the host. More storage remaining is better, to a point.",
+                          "example": 0.1234
+                        },
+                        "uptimeadjustment": {
+                          "type": "integer",
+                          "description": "The multiplier that gets applied to a host based on the uptime percentage of the host. The penalty increases extremely quickly as uptime drops below 90%.",
+                          "example": 0.1234
+                        },
+                        "versionadjustment": {
+                          "type": "integer",
+                          "description": "The multiplier that gets applied to a host based on the version of Sia\nthat they are running. Versions get penalties if there are known bugs,\nscaling limitations, performance limitations, etc. Generally, the most\nrecent version is always the one with the highest score.\n",
+                          "example": 0.1234
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/miner": {
+      "get": {
+        "description": "returns the status of the miner.",
+        "tags": [
+          "Miner"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "blocksmined": {
+                  "type": "integer",
+                  "description": "Number of mined blocks. This value is remembered after restarting.",
+                  "example": 9001
+                },
+                "cpuhashrate": {
+                  "type": "integer",
+                  "description": "How fast the cpu is hashing, in hashes per second.",
+                  "example": 1337
+                },
+                "cpumining": {
+                  "type": "boolean",
+                  "description": "true if the cpu miner is active.",
+                  "example": false
+                },
+                "staleblocksmined": {
+                  "description": "Number of mined blocks that are stale, indicating that they are not\nincluded in the current longest chain, likely because some other block at\nthe same height had its chain extended first.\n",
+                  "type": "integer",
+                  "example": 0
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/miner/start": {
+      "get": {
+        "description": "starts a single threaded cpu miner. Does nothing if the cpu miner is already running.",
+        "tags": [
+          "Miner"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/miner/stop": {
+      "get": {
+        "description": "stops the cpu miner. Does nothing if the cpu miner is not running.",
+        "tags": [
+          "Miner"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/miner/header": {
+      "get": {
+        "description": "provides a block header that is ready to be grinded on for work.",
+        "tags": [
+          "Miner"
+        ],
+        "produces": [
+          "application/octet-stream"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "submits a header that has passed the POW.",
+        "tags": [
+          "Miner"
+        ],
+        "consumes": [
+          "application/octet-stream"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
     "/daemon/constants": {
       "get": {
         "tags": [
@@ -941,6 +1299,96 @@
       }
     }
   },
+  "definitions": {
+    "Hostdb": {
+      "properties": {
+        "hosts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "acceptingcontracts": {
+                "type": "boolean",
+                "description": "true if the host is accepting new contracts.",
+                "example": true
+              },
+              "maxdownloadbatchsize": {
+                "type": "integer",
+                "description": "Maximum number of bytes that the host will allow to be requested by a single download request.",
+                "example": 17825792
+              },
+              "maxduration": {
+                "type": "integer",
+                "description": "Maximum duration in blocks that a host will allow for a file contract.\nThe host commits to keeping files for the full duration under the\nthreat of facing a large penalty for losing or dropping data before\nthe duration is complete. The storage proof window of an incoming file\ncontract must end before the current height + maxduration.\nThere is a block approximately every 10 minutes.\ne.g. 1 day = 144 blocks\n",
+                "example": 25920
+              },
+              "maxrevisebatchsize": {
+                "type": "integer",
+                "description": "Maximum size in bytes of a single batch of file contract\nrevisions. Larger batch sizes allow for higher throughput as there is\nsignificant communication overhead associated with performing a batch\nupload.\n",
+                "example": 17825792
+              },
+              "netaddress": {
+                "type": "string",
+                "description": "Remote address of the host. It can be an IPv4, IPv6, or hostname, along with the port. IPv6 addresses are enclosed in square brackets.",
+                "example": "123.456.789.0:9982"
+              },
+              "remainingstorage": {
+                "type": "integer",
+                "description": "Unused storage capacity the host claims it has, in bytes.",
+                "example": 35000000000
+              },
+              "sectorsize": {
+                "type": "integer",
+                "description": "Smallest amount of data in bytes that can be uploaded or downloaded to or from the host.",
+                "example": 4194304
+              },
+              "totalstorage": {
+                "type": "integer",
+                "description": "Total amount of storage capacity the host claims it has, in bytes.",
+                "example": 35000000000
+              },
+              "unlockhash": {
+                "type": "string",
+                "description": "Address at which the host can be paid when forming file contracts.",
+                "example": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab"
+              },
+              "windowsize": {
+                "type": "integer",
+                "description": "A storage proof window is the number of blocks that the host has to\nget a storage proof onto the blockchain. The window size is the\nminimum size of window that the host will accept in a file contract.\n",
+                "example": 144
+              },
+              "publickey": {
+                "type": "object",
+                "description": "Public key used to identify and verify hosts.",
+                "properties": {
+                  "algorithm": {
+                    "type": "string",
+                    "description": "Algorithm used for signing and verification. Typically \"ed25519\".",
+                    "example": "ed25519"
+                  },
+                  "key": {
+                    "type": "string",
+                    "description": "Key used to verify signed host messages.",
+                    "example": "RW50cm9weSBpc24ndCB3aGF0IGl0IHVzZWQgdG8gYmU="
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "StandardError": {
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  },
   "swagger": "2.0",
   "info": {
     "version": "1.0.0",
@@ -984,18 +1432,22 @@
         "description": "GitHub",
         "url": "https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Host.md"
       }
-    }
-  ],
-  "definitions": {
-    "StandardError": {
-      "required": [
-        "message"
-      ],
-      "properties": {
-        "message": {
-          "type": "string"
-        }
+    },
+    {
+      "name": "HostDB",
+      "description": "The hostdb maintains a database of all hosts known to the network. The database identifies hosts by their public key and keeps track of metrics such as price.\n",
+      "externalDocs": {
+        "description": "GitHub",
+        "url": "https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/HostDB.md"
+      }
+    },
+    {
+      "name": "Miner",
+      "description": "The miner provides endpoints for getting headers for work and submitting solved headers to the network. The miner also provides endpoints for controlling a basic CPU mining implementation.\n",
+      "externalDocs": {
+        "description": "GitHub",
+        "url": "https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Miner.md"
       }
     }
-  }
+  ]
 }
