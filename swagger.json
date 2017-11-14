@@ -1169,18 +1169,13 @@
           "Consensus"
         ],
         "description": "validates a set of transactions using the current utxo set.",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "schema": {
+            "$ref": "#/definitions/TransactionSet"
           }
-        ],
+        }],
         "responses": {
           "204": {
             "description": "Successful Response"
@@ -1386,6 +1381,12 @@
         "message": {
           "type": "string"
         }
+      }
+    },
+    "TransactionSet": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     }
   },
