@@ -2049,8 +2049,7 @@
             "name": "encryptionpassword",
             "description": "Password that will be used to encrypt the wallet. All subsequent calls should use this password. If left blank, the seed that gets returned will also be the encryption password.",
             "in": "query",
-            "type": "string",
-            "required": true
+            "type": "string"
           },
           {
             "name": "dictionary",
