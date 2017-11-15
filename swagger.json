@@ -1950,6 +1950,7 @@
   "schemes": [
     "http"
   ],
+  "host": "localhost:9980",
   "produces": [
     "application/json"
   ],
