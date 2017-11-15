@@ -1844,6 +1844,816 @@
           }
         }
       }
+    },
+    "/wallet": {
+      "get": {
+        "description": "returns basic information about the wallet,  such as whether the wallet is locked or unlocked.",
+        "tags": [
+          "Wallet"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "encrypted": {
+                  "description": "Indicates whether the wallet has been encrypted or not. If the wallet has not been encrypted, then no data has been generated at all, and the first time the wallet is unlocked, the password given will be used as the password for encrypting all of the data. 'encrypted' will only be set to false if the wallet has never been unlocked before (the unlocked wallet is still encryped - but the encryption key is in memory).",
+                  "type": "boolean",
+                  "example": true
+                },
+                "unlocked": {
+                  "description": "Indicates whether the wallet is currently locked or unlocked. Some calls become unavailable when the wallet is locked.",
+                  "type": "boolean",
+                  "example": true
+                },
+                "rescanning": {
+                  "description": "Indicates whether the wallet is currently rescanning the blockchain. This will be true for the duration of calls to /unlock, /seeds, /init/seed, and /sweep/seed.",
+                  "type": "boolean",
+                  "example": false
+                },
+                "confirmedsiacoinbalance": {
+                  "description": "Number of siacoins, in hastings, available to the wallet as of the most recent block in the blockchain.",
+                  "type": "string",
+                  "example": "123456"
+                },
+                "unconfirmedoutgoingsiacoins": {
+                  "description": "Number of siacoins, in hastings, that are leaving the wallet according to the set of unconfirmed transactions. Often this number appears inflated, because outputs are frequently larger than the number of coins being sent, and there is a refund. These coins are counted as outgoing, and the refund is counted as incoming. The difference in balance can be calculated using 'unconfirmedincomingsiacoins' - 'unconfirmedoutgoingsiacoins'  ",
+                  "type": "string",
+                  "example": "0"
+                },
+                "unconfirmedincomingsiacoins": {
+                  "description": "Number of siacoins, in hastings, are entering the wallet according to the set of unconfirmed transactions. This number is often inflated by outgoing siacoins, because outputs are frequently larger than the amount being sent. The refund will be included in the unconfirmed incoming siacoins balance.",
+                  "type": "string",
+                  "example": "789"
+                },
+                "siafundbalance": {
+                  "description": "Number of siafunds available to the wallet as of the most recent block in the blockchain.",
+                  "type": "string",
+                  "example": "1"
+                },
+                "siacoinclaimbalance": {
+                  "description": "Number of siacoins, in hastings, that can be claimed from the siafunds as of the most recent block. Because the claim balance increases every time a file contract is created, it is possible that the balance will increase before any claim transaction is confirmed.",
+                  "type": "string",
+                  "example": "9001"
+                },
+                "dustthreshold": {
+                  "description": "Number of siacoins, in hastings per byte, below which a transaction output cannot be used because the wallet considers it a dust output",
+                  "type": "string",
+                  "example": "1234"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/033x": {
+      "post": {
+        "description": "loads a v0.3.3.x wallet into the current wallet, harvesting all of the secret keys. All spendable addresses in the loaded wallet will become spendable from the current wallet. An error will be returned if the given encryptionpassword is incorrect.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "source",
+            "description": "Path on disk to the v0.3.3.x wallet to be loaded.",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "encryptionpassword",
+            "description": "Encryption key of the wallet.",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/address": {
+      "get": {
+        "description": "gets a new address from the wallet generated by the primary seed. An error will be returned if the wallet is locked.",
+        "tags": [
+          "Wallet"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "address": {
+                  "description": "Wallet address that can receive siacoins or siafunds.  Addresses are 76 character long hex strings.",
+                  "type": "string",
+                  "example": "1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/addresses": {
+      "get": {
+        "description": "fetches the list of addresses from the wallet.  If the wallet has not been created or unlocked, no addresses will be returned. After the wallet is unlocked, this call will continue to return its addresses  even after the wallet is locked again.",
+        "tags": [
+          "Wallet"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "addresses": {
+                  "description": "Array of wallet addresses owned by the wallet.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": {
+                    "addresses": [
+                      "1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab",
+                      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/backup": {
+      "get": {
+        "description": "creates a backup of the wallet settings file. Though this can easily be done manually, the settings file is often in an unknown or difficult to find location. The /wallet/backup call can spare users the trouble of needing to find their wallet file. The destination file is overwritten if it already exists.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "destination",
+            "description": "path to the location on disk where the backup file will be saved.",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/init": {
+      "post": {
+        "description": "initializes the wallet. After the wallet has been initialized once, it does not need to be initialized again, and future calls to /wallet/init will return an error, unless the force flag is set. The encryption password is provided by the api call. If the password is blank, then the password will be set to the same as the seed.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "encryptionpassword",
+            "description": "Password that will be used to encrypt the wallet. All subsequent calls should use this password. If left blank, the seed that gets returned will also be the encryption password.",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "dictionary",
+            "description": "Name of the dictionary that should be used when encoding the seed. 'english' is the most common choice when picking a dictionary.",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "force",
+            "description": "boolean, when set to true /wallet/init will Reset the wallet if one exists instead of returning an error. This allows API callers to reinitialize a new wallet.",
+            "in": "query",
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "primaryseed": {
+                  "description": "Wallet seed used to generate addresses that the wallet is able to spend.",
+                  "type": "string",
+                  "example": "hello world hello world hello world hello world hello world hello world  hello world hello world hello world hello world hello world hello world  hello world hello world hello"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/init/seed": {
+      "post": {
+        "description": "initializes the wallet using a preexisting seed.  After the wallet has been initialized once, it does not need to be initialized again, and future calls to /wallet/init/seed will return an error unless the force flag is set. The encryption password is provided by the api call. If the password is blank, then the password will be set to the same as the seed. Note that loading a preexisting seed requires scanning the blockchain to determine how many keys have been generated from the seed. For this reason, /wallet/init/seed can only be called if the blockchain is synced.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "encryptionpassword",
+            "description": "Password that will be used to encrypt the wallet. All subsequent calls should use this password. If left blank, the seed that gets returned will also be the encryption password.",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "dictionary",
+            "description": "Name of the dictionary that should be used when encoding the seed. 'english' is the most common choice when picking a dictionary.",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "seed",
+            "description": "Dictionary-encoded phrase that corresponds to the seed being used to initialize the wallet.",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "force",
+            "description": "boolean, when set to true /wallet/init will Reset the wallet if one exists instead of returning an error. This allows API callers to reinitialize a new wallet.",
+            "in": "query",
+            "type": "boolean",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/seed": {
+      "post": {
+        "description": "gives the wallet a seed to track when looking for incoming transactions. The wallet will be able to spend outputs related to addresses created by the seed. The seed is added as an auxiliary seed, and does not replace the primary seed. Only the primary seed will be used for generating new addresses.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "encryptionpassword",
+            "description": "Key used to encrypt the new seed when it is saved to disk.",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "dictionary",
+            "description": "Name of the dictionary that should be used when encoding the seed. 'english' is the most common choice when picking a dictionary.          ",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "seed",
+            "description": "Dictionary-encoded phrase that corresponds to the seed being added to the wallet.",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/seeds": {
+      "get": {
+        "description": "returns a list of seeds in use by the wallet.  The primary seed is the only seed that gets used to generate new addresses. This call is unavailable when the wallet is locked.\nA seed is an encoded version of a 128 bit random seed. The output is 15 words chosen from a small dictionary as indicated by the input. The most common choice for the dictionary is going to be 'english'. The underlying seed is the same no matter what dictionary is used for the encoding. The encoding also contains a small checksum of the seed,  to help catch simple mistakes when copying. The library entropy-mnemonics is used when encoding.      ",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "dictionary",
+            "description": "Name of the dictionary that should be used when encoding the seed. 'english' is the most common choice when picking a dictionary.",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "primaryseed": {
+                  "description": "Seed that is actively being used to generate new addresses for the wallet.",
+                  "type": "string",
+                  "example": "hello world hello world hello world hello world hello world hello world  hello world hello world hello world hello world hello world hello world  hello world hello world hello"
+                },
+                "addressesremaining": {
+                  "description": "Number of addresses that remain in the primary seed until exhaustion has been reached. Once exhaustion has been reached, new addresses will continue to be generated but they will be more difficult to recover in the event of a lost wallet file or encryption password.",
+                  "type": "integer",
+                  "example": 2500
+                },
+                "allseeds": {
+                  "description": "Array of all seeds that the wallet references when scanning the blockchain for outputs. The wallet is able to spend any output generated by any of the seeds, however only the primary seed is being used to generate new addresses.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello world hello",
+                    "foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/siacoins": {
+      "post": {
+        "description": "Send siacoins to an address or set of addresses. The outputs are arbitrarily selected from addresses in the wallet. If 'outputs' is supplied, 'amount' and 'destination' must be empty. The number of outputs should not exceed 400; this may result in a transaction too large to fit in the transaction pool.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "amount",
+            "description": "Number of hastings being sent. A hasting is the smallest unit in Sia. There are 10^24 hastings in a siacoin.",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "destination",
+            "description": "Address that is receiving the coins.",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "outputs",
+            "description": "JSON array of outputs. The structure of each output is: {\"unlockhash\": \"<destination>\", \"value\": \"<amount>\"}",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "transactionids": {
+                  "description": "Array of IDs of the transactions that were created when sending the coins. The last transaction contains the output headed to the 'destination'. Transaction IDs are 64 character long hex strings.                ",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/siafunds": {
+      "post": {
+        "description": "sends siafunds to an address.  The outputs are arbitrarily selected from addresses in the wallet. Any siacoins available in the siafunds being sent (as well as the siacoins  available in any siafunds that end up in a refund address) will become  available to the wallet as siacoins after 144 confirmations.  To access all of the siacoins in the siacoin claim balance, send all of  the siafunds to an address in your control (this will give you all the  siacoins, while still letting you control the siafunds).",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "amount",
+            "description": "Number of siafunds being sent.",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "destination",
+            "description": "Address that is receiving the funds.",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "transactionids": {
+                  "description": "Array of IDs of the transactions that were created when sending the coins. The last transaction contains the output headed to the 'destination'. Transaction IDs are 64 character long hex strings.                ",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                    "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/siagkey": {
+      "post": {
+        "description": "Load a key into the wallet that was generated by siag.  Most siafunds are currently in addresses created by siag.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "encryptionpassword",
+            "description": "Key that is used to encrypt the siag key when it is imported to the wallet.",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "keyfiles",
+            "description": "List of filepaths that point to the keyfiles that make up the siag key. There should be at least one keyfile per required signature. The filenames need to be commna separated (no spaces), which means filepaths that contain a comma are not allowed.",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/sweep/seed": {
+      "post": {
+        "description": "Scan the blockchain for outputs belonging to a seed and send them to an  address owned by the wallet.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "dictionary",
+            "description": "Name of the dictionary that should be used when decoding the seed. 'english' is the most common choice when picking a dictionary.",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "seed",
+            "description": "Dictionary-encoded phrase that corresponds to the seed being added to the wallet.",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "coins": {
+                  "description": "Number of siacoins, in hastings, transferred to the wallet as a result of the sweep.",
+                  "type": "string",
+                  "example": "123456"
+                },
+                "funds": {
+                  "description": "Number of siafunds transferred to the wallet as a result of the sweep.",
+                  "type": "string",
+                  "example": "1"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/lock": {
+      "post": {
+        "description": "locks the wallet, wiping all secret keys. After being locked, the keys are encrypted. Queries for the seed, to send siafunds, and related queries become unavailable. Queries concerning transaction history and balance are still available.",
+        "tags": [
+          "Wallet"
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/transaction/{id}": {
+      "get": {
+        "description": "gets the transaction associated with a specific transaction id.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "description": "ID of the transaction being requested.",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "transaction": {
+                  "$ref": "#/definitions/Transaction"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/transactions": {
+      "get": {
+        "description": "returns a list of transactions related to the wallet.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "startheight",
+            "description": "Height of the block where transaction history should begin.",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "endheight",
+            "description": "Height of of the block where the transaction history should end. If 'endheight' is greater than the current height, all transactions up to and including the most recent block will be provided.",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "confirmedtransactions": {
+                  "description": "All of the confirmed transactions appearing between height 'startheight' and height 'endheight' (inclusive).",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Transaction"
+                  }
+                },
+                "unconfirmedtransactions": {
+                  "description": "All of the unconfirmed transactions.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Transaction"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/transactions/{addr}": {
+      "get": {
+        "description": "returns all of the transactions related to a specific address.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "addr",
+            "description": "Unlock hash (i.e. wallet address) whose transactions are being requested.",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "transactions": {
+                  "description": "Array of processed transactions that relate to the supplied address.",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Transaction"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/unlock": {
+      "post": {
+        "description": "unlocks the wallet. The wallet is capable of knowing whether the correct password was provided.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "encryptionpassword",
+            "description": "Password that gets used to decrypt the file. Most frequently, the encryption password is the same as the primary wallet seed.",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/verify/address/{addr}": {
+      "get": {
+        "description": "takes the address specified by addr and returns a JSON response indicating if the address is valid.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "addr",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "valid": {
+                  "description": "valid indicates if the address supplied to addr is a valid UnlockHash.",
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/changepassword": {
+      "post": {
+        "description": "changes the wallet's encryption password.",
+        "tags": [
+          "Wallet"
+        ],
+        "parameters": [
+          {
+            "name": "encryptionpassword",
+            "description": "encryptionpassword is the wallet's current encryption password.",
+            "in": "query",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "newpassword",
+            "description": "newpassword is the new password for the wallet.",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1940,6 +2750,102 @@
       "items": {
         "type": "string"
       }
+    },
+    "Transaction": {
+      "properties": {
+        "transaction": {
+          "description": "Raw transaction. The rest of the fields in the resposne are determined from this raw transaction. It is left undocumented here as the processed transaction (the rest of the fields in this object) are usually what is desired.",
+          "type": "object"
+        },
+        "transactionid": {
+          "description": "ID of the transaction from which the wallet transaction was derived.",
+          "type": "string",
+          "example": "1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+        },
+        "confirmationheight": {
+          "description": "Block height at which the transaction was confirmed. If the transaction is unconfirmed the height will be the max value of an unsigned 64-bit integer.",
+          "type": "integer",
+          "example": 50000
+        },
+        "confirmationtimestamp": {
+          "description": "Time, in unix time, at which a transaction was confirmed. If the transaction is unconfirmed the timestamp will be the max value of an unsigned 64-bit integer.",
+          "type": "integer",
+          "example": 1257894000
+        },
+        "inputs": {
+          "description": "Array of processed inputs detailing the inputs to the transaction.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "parentid": {
+                "description": "The id of the output being spent.",
+                "type": "string",
+                "example": "1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+              },
+              "fundtype": {
+                "description": "Type of fund represented by the input. Possible values are 'siacoin input' and 'siafund input'.",
+                "type": "string",
+                "example": "siacoin input"
+              },
+              "walletaddress": {
+                "description": "true if the address is owned by the wallet.",
+                "type": "boolean",
+                "example": false
+              },
+              "relatedaddress": {
+                "description": "Address that is affected. For inputs (outgoing money), the related address is usually not important because the wallet arbitrarily selects which addresses will fund a transaction.",
+                "type": "string",
+                "example": "1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab"
+              },
+              "value": {
+                "description": "Amount of funds that have been moved in the input.",
+                "type": "string",
+                "example": "1234"
+              }
+            }
+          }
+        },
+        "outputs": {
+          "description": "Array of processed outputs detailing the outputs of the transaction. Outputs related to file contracts are excluded.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "The id of the output that was created.",
+                "type": "string",
+                "example": "1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+              },
+              "fundtype": {
+                "description": "Type of fund is represented by the output. Possible values are 'siacoin output', 'siafund output', 'claim output', and 'miner payout'. Siacoin outputs and claim outputs both relate to siacoins. Siafund outputs relate to siafunds. Miner payouts point to siacoins that have been spent on a miner payout. Because the destination of the miner payout is determined by the block and not the transaction, the data 'maturityheight', 'walletaddress', and 'relatedaddress' are left blank.                            ",
+                "type": "string",
+                "example": "siacoin output"
+              },
+              "maturityheight": {
+                "description": "Block height the output becomes available to be spent. Siacoin outputs and siafund outputs mature immediately - their maturity height will always be the confirmation height of the transaction. Claim outputs cannot be spent until they have had 144 confirmations, thus the maturity height of a claim output will always be 144 larger than the confirmation height of the transaction.",
+                "type": "integer",
+                "example": 50000
+              },
+              "walletaddress": {
+                "description": "true if the address is owned by the wallet.",
+                "type": "boolean",
+                "example": false
+              },
+              "relatedaddress": {
+                "description": "Address that is affected. For outputs (incoming money), the related address field can be used to determine who has sent money to the wallet.",
+                "type": "string",
+                "example": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "value": {
+                "description": "Amount of funds that have been moved in the output.",
+                "type": "string",
+                "example": "1234"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "swagger": "2.0",
@@ -2009,6 +2915,14 @@
       "externalDocs": {
         "description": "GitHub",
         "url": "https://github.com/NebulousLabs/Sia/blob/master/doc/api/Renter.md"
+      }
+    },
+    {
+      "name": "Wallet",
+      "description": "The wallet stores and manages siacoins and siafunds. The wallet's API endpoints expose methods for creating and loading wallets, locking and unlocking, sending siacoins and siafunds, and getting the wallet's balance.\nYou must create a wallet before you can use the wallet's API endpoints. You can create a wallet with the /wallet/init endpoint. Wallets are always encrypted on disk. Calls to some wallet API endpoints will fail until the  wallet is unlocked. The wallet can be unlocked with the /wallet/unlock endpoint. Once the wallet is unlocked calls to the API endpoints will succeed until the wallet is locked again with /wallet/lock, or Siad is restarted.  The host and renter require the miner to be unlocked.",
+      "externalDocs": {
+        "description": "GitHub",
+        "url": "https://github.com/NebulousLabs/Sia/blob/master/doc/api/Wallet.md"
       }
     }
   ]
