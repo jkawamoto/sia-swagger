@@ -1592,12 +1592,12 @@
                       },
                       "redundancy": {
                         "description": "Average redundancy of the file on the network. Redundancy is calculated by dividing the amount of data uploaded in the file's open contracts by the size of the file. Redundancy does not necessarily correspond to availability. Specifically, a redundancy >= 1 does not indicate the file is available as there could be a chunk of the file with 0 redundancy.",
-                        "type": "integer",
+                        "type": "number",
                         "example": 5
                       },
                       "uploadprogress": {
                         "description": "Percentage of the file uploaded, including redundancy. Uploading has completed when uploadprogress is 100. Files may be available for download before upload progress is 100.                      ",
-                        "type": "integer",
+                        "type": "number",
                         "example": 100
                       },
                       "expiration": {
