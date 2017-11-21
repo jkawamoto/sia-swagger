@@ -1326,11 +1326,13 @@
                         },
                         "period": {
                           "type": "integer",
+                          "format": "int64",
                           "description": "Duration of contracts formed, in number of blocks.",
                           "example": 6048
                         },
                         "renewwindow": {
                           "type": "integer",
+                          "format": "int64",
                           "description": "If the current blockheight + the renew window >= the height the contract is scheduled to end, the contract is renewed automatically. Is always nonzero.",
                           "example": 3024
                         }
@@ -1448,6 +1450,7 @@
                       "endheight": {
                         "description": "Block height that the file contract ends on.",
                         "type": "integer",
+                        "format": "int64",
                         "example": 50000
                       },
                       "id": {
@@ -1472,6 +1475,7 @@
                       "size": {
                         "description": "Size of the file contract, which is typically equal to the number of bytes that have been uploaded to the host.",
                         "type": "integer",
+                        "format": "int64",
                         "example": 8192
                       }
                     }
@@ -1518,11 +1522,13 @@
                       "filesize": {
                         "description": "Size, in bytes, of the file being downloaded.",
                         "type": "integer",
+                        "format": "int64",
                         "example": 8192
                       },
                       "received": {
                         "description": "Number of bytes downloaded thus far.",
                         "type": "integer",
+                        "format": "int64",
                         "example": 4096
                       },
                       "starttime": {
@@ -1578,6 +1584,7 @@
                       "filesize": {
                         "description": "Size of the file in bytes.",
                         "type": "integer",
+                        "format": "int64",
                         "example": 8192
                       },
                       "available": {
@@ -1603,6 +1610,7 @@
                       "expiration": {
                         "description": "Block height at which the file ceases availability.",
                         "type": "integer",
+                        "format": "int64",
                         "example": 60000
                       }
                     }
@@ -2201,6 +2209,7 @@
                 "addressesremaining": {
                   "description": "Number of addresses that remain in the primary seed until exhaustion has been reached. Once exhaustion has been reached, new addresses will continue to be generated but they will be more difficult to recover in the event of a lost wallet file or encryption password.",
                   "type": "integer",
+                  "format": "int64",
                   "example": 2500
                 },
                 "allseeds": {
@@ -2670,11 +2679,13 @@
               },
               "maxdownloadbatchsize": {
                 "type": "integer",
+                "format": "int64",
                 "description": "Maximum number of bytes that the host will allow to be requested by a single download request.",
                 "example": 17825792
               },
               "maxduration": {
                 "type": "integer",
+                "format": "int64",
                 "description": "Maximum duration in blocks that a host will allow for a file contract.\nThe host commits to keeping files for the full duration under the\nthreat of facing a large penalty for losing or dropping data before\nthe duration is complete. The storage proof window of an incoming file\ncontract must end before the current height + maxduration.\nThere is a block approximately every 10 minutes.\ne.g. 1 day = 144 blocks\n",
                 "example": 25920
               },
@@ -2690,16 +2701,19 @@
               },
               "remainingstorage": {
                 "type": "integer",
+                "format": "int64",
                 "description": "Unused storage capacity the host claims it has, in bytes.",
                 "example": 35000000000
               },
               "sectorsize": {
                 "type": "integer",
+                "format": "int64",
                 "description": "Smallest amount of data in bytes that can be uploaded or downloaded to or from the host.",
                 "example": 4194304
               },
               "totalstorage": {
                 "type": "integer",
+                "format": "int64",
                 "description": "Total amount of storage capacity the host claims it has, in bytes.",
                 "example": 35000000000
               },
@@ -2764,11 +2778,13 @@
         "confirmationheight": {
           "description": "Block height at which the transaction was confirmed. If the transaction is unconfirmed the height will be the max value of an unsigned 64-bit integer.",
           "type": "integer",
+          "format": "int64",
           "example": 50000
         },
         "confirmationtimestamp": {
           "description": "Time, in unix time, at which a transaction was confirmed. If the transaction is unconfirmed the timestamp will be the max value of an unsigned 64-bit integer.",
           "type": "integer",
+          "format": "int64",
           "example": 1257894000
         },
         "inputs": {
@@ -2824,6 +2840,7 @@
               "maturityheight": {
                 "description": "Block height the output becomes available to be spent. Siacoin outputs and siafund outputs mature immediately - their maturity height will always be the confirmation height of the transaction. Claim outputs cannot be spent until they have had 144 confirmations, thus the maturity height of a claim output will always be 144 larger than the confirmation height of the transaction.",
                 "type": "integer",
+                "format": "int64",
                 "example": 50000
               },
               "walletaddress": {
