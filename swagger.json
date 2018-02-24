@@ -1822,15 +1822,13 @@
             "name": "datapieces",
             "description": "The number of data pieces to use when erasure coding the file.",
             "in": "query",
-            "type": "integer",
-            "required": true
+            "type": "integer"
           },
           {
             "name": "paritypieces",
             "description": "The number of parity pieces to use when erasure coding the file. Total redundancy of the file is (datapieces+paritypieces)/datapieces.",
             "in": "query",
-            "type": "integer",
-            "required": true
+            "type": "integer"
           },
           {
             "name": "source",
