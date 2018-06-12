@@ -1321,6 +1321,7 @@
                         },
                         "hosts": {
                           "type": "integer",
+                          "format": "int64",
                           "description": "Number of hosts that contracts will be formed with.",
                           "example": 24
                         },
@@ -1337,6 +1338,24 @@
                           "example": 3024
                         }
                       }
+                    },
+                    "maxuploadspeed": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "bytes per second.  MaxUploadSpeed by defaul is unlimited but can be set by the user to  manage bandwidth",
+                      "example": 1234
+                    },
+                    "maxdownloadspeed": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "bytes per second.                     MaxDownloadSpeed by defaul is unlimited but can be set by the user to  manage bandwidth",
+                      "example": 1234
+                    },
+                    "streamcachesize": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "The StreamCacheSize is the number of data chunks that will be cached during streaming",
+                      "example": 4
                     }
                   }
                 },
@@ -1344,9 +1363,19 @@
                   "type": "object",
                   "description": "Metrics about how much the Renter has spent on storage, uploads, and downloads.",
                   "properties": {
+                    "contractfees": {
+                      "type": "string",
+                      "description": "Amount of money spent on contract fees, transaction fees and siafund fees. In hastings.",
+                      "example": "1234"
+                    },
+                    "totalallocated": {
+                      "type": "string",
+                      "description": "Total amount of money that the renter has put into contracts. Includes spent money and also money that will be returned to the renter. In hastings.",
+                      "example": "1234"
+                    },
                     "contractspending": {
                       "type": "string",
-                      "description": "How much money, in hastings, the Renter has spent on file contracts, including fees.",
+                      "description": "How much money, in hastings, the Renter has spent on file contracts, including fees. (deprecated, now totalallocated)",
                       "example": "1234"
                     },
                     "downloadspending": {
@@ -1403,7 +1432,8 @@
             "name": "hosts",
             "description": "Number of hosts that contracts should be formed with. Files cannot be uploaded to more hosts than you have contracts with, and it's generally good to form a few more contracts than you need.",
             "in": "query",
-            "type": "integer"
+            "type": "integer",
+            "format": "int64"
           },
           {
             "name": "period",
@@ -1415,7 +1445,29 @@
             "name": "renewwindow",
             "description": "Renew window specifies how many blocks before the expiration of the current contracts the renter will wait before renewing the contracts. A smaller renew window means that Sia must be run more frequently, but also means fewer total transaction fees. Storage spending is not affected by the renew window size.",
             "in": "query",
-            "type": "integer"
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "maxdownloadspeed",
+            "description": "Max download speed permitted, speed provide in bytes per second.",
+            "in": "query",
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "maxuploadspeed",
+            "description": "Max upload speed permitted, speed provide in bytes per second",
+            "in": "query",
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "streamcachesize",
+            "description": "Stream cache size specifies how many data chunks will be cached while  streaming.  ",
+            "in": "query",
+            "type": "integer",
+            "format": "int64"
           }
         ],
         "responses": {
@@ -1447,36 +1499,91 @@
                   "items": {
                     "type": "object",
                     "properties": {
+                      "downloadspending": {
+                        "type": "string",
+                        "description": "Amount of contract funds that have been spent on downloads. In hastings.",
+                        "example": "1234"
+                      },
                       "endheight": {
-                        "description": "Block height that the file contract ends on.",
                         "type": "integer",
                         "format": "int64",
+                        "description": "Block height that the file contract ends on.",
                         "example": 50000
                       },
-                      "id": {
-                        "description": "ID of the file contract",
+                      "fees": {
                         "type": "string",
+                        "description": "Fees paid in order to form the file contract.",
+                        "example": "1234"
+                      },
+                      "hostpublickey": {
+                        "type": "object",
+                        "description": "Public key of the host the contract was formed with.",
+                        "properties": {
+                          "algorithm": {
+                            "type": "string",
+                            "example": "ed25519"
+                          },
+                          "key": {
+                            "type": "string",
+                            "example": "RW50cm9weSBpc24ndCB3aGF0IGl0IHVzZWQgdG8gYmU"
+                          }
+                        }
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "ID of the file contract",
                         "example": "1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
                       },
+                      "lasttransaction": {
+                        "type": "object",
+                        "description": "A signed transaction containing the most recent contract revision."
+                      },
                       "netaddress": {
-                        "description": "Address of the host the file contract was formed with.",
                         "type": "string",
+                        "description": "Address of the host the file contract was formed with.",
                         "example": "12.34.56.78:9"
                       },
-                      "lasttransaction": {
-                        "description": "A signed transaction containing the most recent contract revision.",
-                        "type": "object"
-                      },
                       "renterfunds": {
-                        "description": "Remaining funds left for the renter to spend on uploads & downloads.",
                         "type": "string",
+                        "description": "Remaining funds left for the renter to spend on uploads & downloads.",
                         "example": "1234"
                       },
                       "size": {
-                        "description": "Size of the file contract, which is typically equal to the number of bytes that have been uploaded to the host.",
                         "type": "integer",
                         "format": "int64",
+                        "description": "Size of the file contract, which is typically equal to the number of bytes that have been uploaded to the host.",
                         "example": 8192
+                      },
+                      "startheight": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Block height that the file contract began on.",
+                        "example": 50000
+                      },
+                      "storagespending": {
+                        "type": "string",
+                        "description": "Amount of contract funds that have been spent on storage.",
+                        "example": "1234"
+                      },
+                      "totalcost": {
+                        "type": "string",
+                        "description": "Total cost to the wallet of forming the file contract. This includes both the fees and the funds allocated in the contract.",
+                        "example": "1234"
+                      },
+                      "uploadspending": {
+                        "type": "string",
+                        "description": "Amount of contract funds that have been spent on uploads.",
+                        "example": "1234"
+                      },
+                      "goodforupload": {
+                        "type": "boolean",
+                        "description": "Signals if contract is good for uploading data",
+                        "example": true
+                      },
+                      "goodforrenew": {
+                        "type": "boolean",
+                        "description": "Signals if contract is good for a renewal",
+                        "example": false
                       }
                     }
                   }
@@ -1509,36 +1616,64 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "siapath": {
-                        "description": "Siapath given to the file when it was uploaded.",
-                        "type": "string",
-                        "example": "foo/bar.txt"
-                      },
                       "destination": {
-                        "description": "Local path that the file will be downloaded to.",
                         "type": "string",
+                        "description": "Local path that the file will be downloaded to.",
                         "example": "/home/users/alice"
                       },
-                      "filesize": {
-                        "description": "Size, in bytes, of the file being downloaded.",
+                      "destinationtype": {
+                        "type": "string",
+                        "description": "What type of destination was used. Can be \"file\", indicating a download to disk, can be \"buffer\", indicating a download to memory, and can be \"http stream\", indicating that the download was streamed through the http API.",
+                        "example": "file"
+                      },
+                      "length": {
                         "type": "integer",
                         "format": "int64",
+                        "description": "Length of the download. If the download was a partial download, this will indicate the length of the partial download, and not the length of the full file.",
                         "example": 8192
                       },
-                      "received": {
-                        "description": "Number of bytes downloaded thus far.",
+                      "offset": {
                         "type": "integer",
                         "format": "int64",
-                        "example": 4096
+                        "description": "Offset within the file of the download. For full file downloads, the  offset will be '0'. For partial downloads, the offset may be anywhere  within the file. offset+length will never exceed the full file size.",
+                        "example": 0
                       },
-                      "starttime": {
-                        "description": "Time at which the download was initiated in RFC 3339.",
+                      "siapath": {
                         "type": "string",
+                        "description": "Siapath given to the file when it was uploaded.",
+                        "example": "foo/bar.txt"
+                      },
+                      "completed": {
+                        "type": "boolean",
+                        "description": "Whether or not the download has completed. Will be false initially, and set to true immediately as the download has been fully written out to the file, to the http stream, or to the in-memory buffer. Completed will also be set to true if there is an error that causes the download to fail.",
+                        "example": true
+                      },
+                      "endtime": {
+                        "type": "string",
+                        "description": "Time at which the download completed in RFC 3339 time. Will be zero if the download has not yet completed.",
                         "example": "2009-11-10T23:00:00Z"
                       },
                       "error": {
-                        "description": "Error encountered while downloading, if it exists.",
-                        "type": "string"
+                        "type": "string",
+                        "description": "Error encountered while downloading. If there was no error (yet), it will be the empty string.",
+                        "example": ""
+                      },
+                      "received": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "Number of bytes downloaded thus far. Will only be updated as segments of the file complete fully. This typically has a resolution of tens of megabytes.",
+                        "example": 4096
+                      },
+                      "starttime": {
+                        "type": "string",
+                        "description": "Time at which the download was initiated in RFC 3339.",
+                        "example": "2009-11-10T23:00:00Z"
+                      },
+                      "totaldatatransfered": {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "The total amount of data transfered when downloading the file. This will eventually include data transferred during contract + payment negotiation, as well as data from failed piece downloads.",
+                        "example": 10321
                       }
                     }
                   }
@@ -1569,52 +1704,43 @@
                 "files": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "siapath": {
-                        "description": "Path to the file in the renter on the network.",
-                        "type": "string",
-                        "example": "foo/bar.txt"
-                      },
-                      "localpath": {
-                        "description": "Path to the local file on disk.",
-                        "type": "string",
-                        "example": "/home/foo/bar.txt"
-                      },
-                      "filesize": {
-                        "description": "Size of the file in bytes.",
-                        "type": "integer",
-                        "format": "int64",
-                        "example": 8192
-                      },
-                      "available": {
-                        "description": "true if the file is available for download. Files may be available before they are completely uploaded.",
-                        "type": "boolean",
-                        "example": true
-                      },
-                      "renewing": {
-                        "description": "true if the file's contracts will be automatically renewed by the renter.",
-                        "type": "boolean",
-                        "example": true
-                      },
-                      "redundancy": {
-                        "description": "Average redundancy of the file on the network. Redundancy is calculated by dividing the amount of data uploaded in the file's open contracts by the size of the file. Redundancy does not necessarily correspond to availability. Specifically, a redundancy >= 1 does not indicate the file is available as there could be a chunk of the file with 0 redundancy.",
-                        "type": "number",
-                        "example": 5
-                      },
-                      "uploadprogress": {
-                        "description": "Percentage of the file uploaded, including redundancy. Uploading has completed when uploadprogress is 100. Files may be available for download before upload progress is 100.                      ",
-                        "type": "number",
-                        "example": 100
-                      },
-                      "expiration": {
-                        "description": "Block height at which the file ceases availability.",
-                        "type": "integer",
-                        "format": "int64",
-                        "example": 60000
-                      }
-                    }
+                    "$ref": "#/definitions/FileInfo"
                   }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
+    "/renter/file/{siapath}": {
+      "get": {
+        "description": "lists the status of specified file.",
+        "tags": [
+          "Renter"
+        ],
+        "parameters": [
+          {
+            "name": "siapath",
+            "description": "Location of the file in the renter on the network.",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "properties": {
+                "file": {
+                  "$ref": "#/definitions/FileInfo"
                 }
               }
             }
@@ -1714,11 +1840,37 @@
             "required": true
           },
           {
-            "name": "destination",
-            "description": "Location on disk that the file will be downloaded to.",
+            "name": "async",
+            "type": "boolean",
             "in": "query",
+            "description": "If async is true, the http request will be non blocking. Can't be used with"
+          },
+          {
+            "name": "destination",
             "type": "string",
+            "in": "query",
+            "description": "Location on disk that the file will be downloaded to.",
             "required": true
+          },
+          {
+            "name": "httpresp",
+            "type": "boolean",
+            "in": "query",
+            "description": "If httresp is true, the data will be written to the http response."
+          },
+          {
+            "name": "length",
+            "type": "integer",
+            "format": "int64",
+            "in": "query",
+            "description": "Length of the requested data. Has to be <= filesize-offset."
+          },
+          {
+            "name": "offset",
+            "type": "integer",
+            "format": "int64",
+            "in": "query",
+            "description": "Offset relative to the file start from where the download starts."
           }
         ],
         "responses": {
@@ -1804,6 +1956,33 @@
         }
       }
     },
+    "/renter/stream/{siapath}": {
+      "get": {
+        "description": "downloads a file using http streaming. This call blocks until the data is received. The streaming endpoint also uses caching internally to prevent siad from redownloading the same chunk multiple times when only parts of a file are requested at once. This might lead to a substantial increase in ram usage and therefore it is not recommended to stream multiple files in parallel at the moment. This restriction will be removed together with the caching once partial downloads are supported in the future.      ",
+        "tags": [
+          "Renter"
+        ],
+        "parameters": [
+          {
+            "name": "siapath",
+            "type": "string",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "default": {
+            "description": "Error Response",
+            "schema": {
+              "$ref": "#/definitions/StandardError"
+            }
+          }
+        }
+      }
+    },
     "/renter/upload/{siapath}": {
       "post": {
         "description": "uploads a file to the network from the local filesystem.",
@@ -1813,28 +1992,30 @@
         "parameters": [
           {
             "name": "siapath",
-            "description": "Location of the file in the renter on the network.",
-            "in": "path",
             "type": "string",
+            "in": "path",
+            "description": "Location where the file will reside in the renter on the network. The path must be non-empty, may not include any path traversal strings (\"./\", \"../\"), and may not begin with a forward-slash character.",
             "required": true
           },
           {
             "name": "datapieces",
-            "description": "The number of data pieces to use when erasure coding the file.",
+            "type": "integer",
+            "format": "int64",
             "in": "query",
-            "type": "integer"
+            "description": "The number of data pieces to use when erasure coding the file."
           },
           {
             "name": "paritypieces",
-            "description": "The number of parity pieces to use when erasure coding the file. Total redundancy of the file is (datapieces+paritypieces)/datapieces.",
+            "type": "integer",
+            "format": "int64",
             "in": "query",
-            "type": "integer"
+            "description": "The number of parity pieces to use when erasure coding the file. Total redundancy of the file is (datapieces+paritypieces)/datapieces."
           },
           {
             "name": "source",
-            "description": "Location on disk of the file being uploaded.",
-            "in": "query",
             "type": "string",
+            "in": "query",
+            "description": "Location on disk of the file being uploaded.",
             "required": true
           }
         ],
@@ -2860,11 +3041,64 @@
           }
         }
       }
+    },
+    "FileInfo": {
+      "type": "object",
+      "properties": {
+        "siapath": {
+          "type": "string",
+          "description": "Path to the file in the renter on the network.",
+          "example": "foo/bar.txt"
+        },
+        "localpath": {
+          "type": "string",
+          "description": "Path to the local file on disk.",
+          "example": "/home/foo/bar.txt"
+        },
+        "filesize": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Size of the file in bytes.",
+          "example": 8192
+        },
+        "available": {
+          "type": "boolean",
+          "description": "true if the file is available for download. Files may be available before they are completely uploaded.",
+          "example": true
+        },
+        "renewing": {
+          "type": "boolean",
+          "description": "true if the file's contracts will be automatically renewed by the renter.",
+          "example": true
+        },
+        "redundancy": {
+          "type": "number",
+          "description": "Average redundancy of the file on the network. Redundancy is calculated by dividing the amount of data uploaded in the file's open contracts by the size of the file. Redundancy does not necessarily correspond to availability. Specifically, a redundancy >= 1 does not indicate the file is available as there could be a chunk of the file with 0 redundancy.",
+          "example": 5
+        },
+        "uploadedbytes": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Total number of bytes successfully uploaded via current file contracts. This number includes padding and rendundancy, so a file with a size of 8192 bytes might be padded to 40 MiB and, with a redundancy of 5, encoded to 200 MiB for upload.",
+          "example": 209715200
+        },
+        "uploadprogress": {
+          "type": "number",
+          "description": "Percentage of the file uploaded, including redundancy. Uploading has completed when uploadprogress is 100. Files may be available for download before upload progress is 100.",
+          "example": 100
+        },
+        "expiration": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Block height at which the file ceases availability.",
+          "example": 60000
+        }
+      }
     }
   },
   "swagger": "2.0",
   "info": {
-    "version": "1.0.0",
+    "version": "1.3.3",
     "title": "Sia"
   },
   "schemes": [

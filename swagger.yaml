@@ -1,0 +1,3373 @@
+paths:
+  /host:
+    get:
+      description: fetches status information about the host
+      tags:
+        - Host
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              externalsettings:
+                type: object
+                properties:
+                  acceptingcontracts:
+                    type: boolean
+                    description: Whether or not the host is accepting new contracts.
+                  maxdownloadbatchsize:
+                    type: integer
+                    description: >
+                      The maximum size of a single download request from a
+                      renter. Each
+
+                      download request has multiple round trips of communication
+                      that
+
+                      exchange money. Larger batch sizes mean fewer round trips,
+                      but more
+
+                      financial risk for the host - the renter can get a free
+                      batch when
+
+                      downloading by refusing to provide a signature.
+                    example: 17825792
+                  maxduration:
+                    type: integer
+                    description: >
+                      The maximum duration that a host will allow for a file
+                      contract. The
+
+                      host commits to keeping files for the full duration under
+                      the threat
+
+                      of facing a large penalty for losing or dropping data
+                      before the
+
+                      duration is complete. The storage proof window of an
+                      incoming file
+
+                      contract must end before the current height + maxduration.
+                    example: 25920
+                  maxrevisebatchsize:
+                    type: integer
+                    description: >
+                      The maximum size of a single batch of file contract
+                      revisions. The
+
+                      renter can perform DoS attacks on the host by uploading a
+                      batch of
+
+                      data then refusing to provide a signature to pay for the
+                      data. The
+
+                      host can reduce this exposure by limiting the batch size.
+                      Larger
+
+                      batch sizes allow for higher throughput as there is
+                      significant
+
+                      communication overhead associated with performing a batch
+                      upload.
+                    example: 17825792
+                  netaddress:
+                    type: string
+                    description: >-
+                      The IP address or hostname (including port) that the host
+                      should be contacted at.
+                    example: '123.456.789.0:9982'
+                  remainingstorage:
+                    type: integer
+                    description: >-
+                      The amount of unused storage capacity on the host in
+                      bytes. It should be noted that the host can lie.
+                    example: 35000000000
+                  totalstorage:
+                    type: integer
+                    description: >-
+                      The total amount of storage capacity on the host. It
+                      should be noted that the host can lie.
+                    example: 35000000000
+                  unlockhash:
+                    type: string
+                    description: >-
+                      The unlock hash is the address at which the host can be
+                      paid when forming file contracts.
+                    example: >-
+                      0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab
+                  windowsize:
+                    type: integer
+                    description: >
+                      The storage proof window is the number of blocks that the
+                      host has
+
+                      to get a storage proof onto the blockchain. The window
+                      size is the
+
+                      minimum size of window that the host will accept in a file
+                      contract.
+                    example: 144
+                  collateral:
+                    type: string
+                    description: >-
+                      The maximum amount of money that the host will put up as
+                      collateral for storage that is contracted by the renter.
+                    example: 57870370370
+                  maxcollateral:
+                    type: string
+                    description: >-
+                      The maximum amount of collateral that the host will put
+                      into a single file contract.
+                    example: '1e+29'
+                  contractprice:
+                    type: string
+                    description: >
+                      The price that a renter has to pay to create a contract
+                      with the
+
+                      host. The payment is intended to cover transaction fees
+
+                      for the file contract revision and the storage proof that
+                      the host
+
+                      will be submitting to the blockchain.
+                    example: '3e+25'
+                  downloadbandwidthprice:
+                    type: string
+                    description: >-
+                      The price that a renter has to pay when downloading data
+                      from the host.
+                    example: 250000000000000
+                  storageprice:
+                    type: string
+                    description: >-
+                      The price that a renter has to pay to store files with the
+                      host.
+                    example: 231481481481
+                  uploadbandwidthprice:
+                    type: string
+                    description: >-
+                      The price that a renter has to pay when uploading data to
+                      the host.
+                    example: 100000000000000
+                  revisionnumber:
+                    type: integer
+                    description: >
+                      The revision number indicates to the renter what iteration
+                      of
+
+                      settings the host is currently at. Settings are generally
+                      signed.
+
+                      If the renter has multiple conflicting copies of settings
+                      from the
+
+                      host, the renter can expect the one with the higher
+                      revision number
+
+                      to be more recent.
+                    example: 0
+                  version:
+                    type: string
+                    description: >-
+                      The version of external settings being used. This field
+                      helps coordinate updates while preserving compatibility
+                      with older nodes.
+                    example: 1.0.0
+              financialmetrics:
+                type: object
+                description: The financial status of the host.
+                properties:
+                  contractcount:
+                    type: integer
+                    description: Number of open file contracts.
+                    example: 2
+                  contractcompensation:
+                    type: string
+                    description: >
+                      The amount of money that renters have given to the host to
+                      pay for
+
+                      file contracts. The host is required to submit a file
+                      contract
+
+                      revision and a storage proof for every file contract that
+                      gets created,
+
+                      and the renter pays for the miner fees on these objects.
+                    example: 123
+                  potentialcontractcompensation:
+                    type: string
+                    description: >
+                      The amount of money that renters have given to the host to
+                      pay for
+
+                      file contracts which have not been confirmed yet. The
+                      potential
+
+                      compensation becomes compensation after the storage proof
+                      is
+
+                      submitted.
+                    example: 123
+                  lockedstoragecollateral:
+                    type: string
+                    description: >
+                      The amount of storage collateral which the host has tied
+                      up in file
+
+                      contracts. The host has to commit collateral to a file
+                      contract even
+
+                      if there is no storage, but the locked collateral will be
+                      returned
+
+                      even if the host does not submit a storage proof - the
+                      collateral is
+
+                      not at risk, it is merely set aside so that it can be put
+                      at risk
+
+                      later.
+                    example: 123
+                  lostrevenue:
+                    type: string
+                    description: >
+                      The amount of revenue, including storage revenue and
+                      bandwidth
+
+                      revenue, that has been lost due to failed file contracts
+                      and
+
+                      failed storage proofs.
+                    example: 123
+                  loststoragecollateral:
+                    type: string
+                    description: >-
+                      The amount of collateral that was put up to protect data
+                      which has been lost due to failed file contracts and
+                      missed storage proofs.
+                    example: 123
+                  potentialstoragerevenue:
+                    type: string
+                    description: >-
+                      The amount of revenue that the host stands to earn if all
+                      storage proofs are submitted corectly and in time.
+                    example: 123
+                  riskedstoragecollateral:
+                    type: string
+                    description: >
+                      The amount of money that the host has risked on file
+                      contracts. If
+
+                      the host starts missing storage proofs, the host can
+                      forfeit up to
+
+                      this many coins. In the event of a missed storage proof,
+                      locked
+
+                      storage collateral gets returned, but risked storage
+                      collateral
+
+                      does not get returned.
+                    example: 123
+                  storagerevenue:
+                    type: string
+                    description: >-
+                      The amount of money that the host has earned from storing
+                      data. This money has been locked down by successful
+                      storage proofs.
+                    example: 123
+                  transactionfeeexpenses:
+                    type: string
+                    description: >
+                      The amount of money that the host has spent on transaction
+                      fees when
+
+                      submitting host announcements, file contract revisions,
+                      and storage
+
+                      proofs.
+                    example: 123
+                  downloadbandwidthrevenue:
+                    type: string
+                    description: >
+                      The amount of money that the host has made from renters
+                      downloading
+
+                      their files. This money has been locked in by successsful
+                      storage
+
+                      proofs.
+                    example: 123
+                  potentialdownloadbandwidthrevenue:
+                    type: string
+                    description: >
+                      The amount of money that the host stands to make from
+                      renters that
+
+                      downloaded their files. The host will only realize this
+                      revenue if
+
+                      the host successfully submits storage proofs for the
+                      related file
+
+                      contracts.
+                    example: 123
+                  potentialuploadbandwidthrevenue:
+                    type: string
+                    description: >
+                      The amount of money that the host stands to make from
+                      renters that
+
+                      uploaded files. The host will only realize this revenue if
+                      the host
+
+                      successfully submits storage proofs for the related file
+                      contracts.
+                    example: 123
+                  uploadbandwidthrevenue:
+                    type: string
+                    description: >
+                      The amount of money that the host has made from renters
+                      uploading
+
+                      their files. This money has been locked in by successful
+                      storage
+
+                      proofs.
+                    example: 123
+              internalsettings:
+                type: object
+                description: >-
+                  The settings of the host. Most interactions between the user
+                  and the host occur by changing the internal settings.
+                properties:
+                  acceptingcontracts:
+                    type: boolean
+                    description: >
+                      When set to true, the host will accept new file contracts
+                      if the
+
+                      terms are reasonable. When set to false, the host will not
+                      accept new
+
+                      file contracts at all.
+                    example: true
+                  maxdownloadbatchsize:
+                    type: integer
+                    description: >
+                      The maximum size of a single download request from a
+                      renter. Each
+
+                      download request has multiple round trips of communication
+                      that
+
+                      exchange money. Larger batch sizes mean fewer round trips,
+                      but more
+
+                      financial risk for the host - the renter can get a free
+                      batch when
+
+                      downloading by refusing to provide a signature.
+                    example: 17825792
+                  maxduration:
+                    type: integer
+                    description: >
+                      The maximum duration of a file contract that the host will
+                      accept.
+
+                      The storage proof window must end before the current
+                      height +
+
+                      maxduration.
+                    example: 25920
+                  maxrevisebatchsize:
+                    type: integer
+                    description: >
+                      The maximum size of a single batch of file contract
+                      revisions. The
+
+                      renter can perform DoS attacks on the host by uploading a
+                      batch of
+
+                      data then refusing to provide a signature to pay for the
+                      data. The
+
+                      host can reduce this exposure by limiting the batch size.
+                      Larger
+
+                      batch sizes allow for higher throughput as there is
+                      significant
+
+                      communication overhead associated with performing a batch
+                      upload.
+                    example: 17825792
+                  netaddress:
+                    type: string
+                    description: >
+                      The IP address or hostname (including port) that the host
+                      should be
+
+                      contacted at. If left blank, the host will automatically
+                      figure out
+
+                      its ip address and use that. If given, the host will use
+                      the address
+
+                      given.
+                    example: '123.456.789.0:9982'
+                  windowsize:
+                    type: integer
+                    description: >
+                      The storage proof window is the number of blocks that the
+                      host has
+
+                      to get a storage proof onto the blockchain. The window
+                      size is the
+
+                      minimum size of window that the host will accept in a file
+                      contract.
+                    example: 144
+                  collateral:
+                    type: string
+                    description: >-
+                      The maximum amount of money that the host will put up as
+                      collateral per byte per block of storage that is
+                      contracted by the renter.
+                    example: 57870370370
+                  collateralbudget:
+                    type: string
+                    description: >-
+                      The total amount of money that the host will allocate to
+                      collateral across all file contracts.
+                    example: '2000000000000000000000000000000'
+                  maxcollateral:
+                    type: string
+                    description: >-
+                      The maximum amount of collateral that the host will put
+                      into a single file contract.
+                    example: '100000000000000000000000000000'
+                  mincontractprice:
+                    type: string
+                    description: >
+                      The minimum price that the host will demand from a renter
+                      when
+
+                      forming a contract. Typically this price is to cover
+                      transaction
+
+                      fees on the file contract revision and storage proof, but
+                      can also
+
+                      be used if the host has a low amount of collateral. The
+                      price is a
+
+                      minimum because the host may automatically adjust the
+                      price upwards
+
+                      in times of high demand.
+                    example: '30000000000000000000000000'
+                  mindownloadbandwidthprice:
+                    type: string
+                    description: >
+                      The minimum price that the host will demand from a renter
+                      when the
+
+                      renter is downloading data. If the host is saturated, the
+                      host may
+
+                      increase the price from the minimum.
+                    example: '250000000000000'
+                  minstorageprice:
+                    type: string
+                    description: >
+                      The minimum price that the host will demand when storing
+                      data for
+
+                      extended periods of time. If the host is low on space, the
+                      price of
+
+                      storage may be set higher than the minimum.
+                    example: '231481481481'
+                  minuploadbandwidthprice:
+                    type: string
+                    description: >
+                      The minimum price that the host will demand from a renter
+                      when the
+
+                      renter is uploading data. If the host is saturated, the
+                      host may
+
+                      increase the price from the minimum.
+                    example: '100000000000000'
+              networkmetrics:
+                description: >-
+                  Information about the network, specifically various ways in
+                  which renters have contacted the host.
+                type: object
+                properties:
+                  downloadcalls:
+                    type: integer
+                    description: >-
+                      The number of times that a renter has attempted to
+                      download something from the host.
+                    example: 0
+                  errorcalls:
+                    type: integer
+                    description: >
+                      The number of calls that have resulted in errors. A small
+                      number of
+
+                      errors are expected, but a large number of errors indicate
+                      either
+
+                      buggy software or malicious network activity. Usually
+                      buggy
+
+                      software.
+                    example: 1
+                  formcontractcalls:
+                    type: integer
+                    description: >-
+                      The number of times that a renter has tried to form a
+                      contract with the host.
+                    example: 2
+                  renewcalls:
+                    type: integer
+                    description: >-
+                      The number of times that a renter has tried to renew a
+                      contract with the host.
+                    example: 3
+                  revisecalls:
+                    type: integer
+                    description: >-
+                      The number of times that the renter has tried to revise a
+                      contract with the host.
+                    example: 4
+                  settingscalls:
+                    type: integer
+                    description: >
+                      The number of times that a renter has queried the host for
+                      the
+
+                      hosts settings. The settings include the price of
+                      bandwidth, which
+
+                      is a price that can adjust every few minutes. This value
+                      is usually
+
+                      very high compared to the others.
+                    example: 5
+                  unrecognizedcalls:
+                    type: integer
+                    description: >-
+                      The number of times that a renter has attempted to use an
+                      unrecognized call. Larger numbers typically indicate buggy
+                      software.
+                    example: 6
+              connectabilitystatus:
+                type: string
+                description: |
+                  connectabilitystatus is one of "checking", "connectable",
+                  or "not connectable", and indicates if the host can connect to
+                  itself on its configured NetAddress.
+                example: checking
+              workingstatus:
+                type: string
+                description: >
+                  workingstatus is one of "checking", "working", or "not
+                  working"
+
+                  and indicates if the host is being actively used by renters.
+                example: checking
+    post:
+      description: >-
+        configures hosting parameters. All parameters are optional; unspecified
+        parameters will be left unchanged.
+      tags:
+        - Host
+      parameters:
+        - name: acceptingcontracts
+          description: >
+            When set to true, the host will accept new file contracts if the
+
+            terms are reasonable. When set to false, the host will not accept
+            new
+
+            file contracts at all.
+          in: query
+          type: boolean
+          required: false
+        - name: maxdownloadbatchsize
+          description: |
+            The maximum size of a single download request from a renter. Each
+            download request has multiple round trips of communication that
+            exchange money. Larger batch sizes mean fewer round trips, but more
+            financial risk for the host - the renter can get a free batch when
+            downloading by refusing to provide a signature.
+          in: query
+          type: string
+          required: false
+        - name: maxduration
+          description: |
+            The maximum duration of a file contract that the host will accept.
+            The storage proof window must end before the current height +
+            maxduration.
+          in: query
+          type: string
+          required: false
+        - name: maxrevisebatchsize
+          description: |
+            The maximum size of a single batch of file contract revisions. The
+            renter can perform DoS attacks on the host by uploading a batch of
+            data then refusing to provide a signature to pay for the data. The
+            host can reduce this exposure by limiting the batch size. Larger
+            batch sizes allow for higher throughput as there is significant
+            communication overhead associated with performing a batch upload.
+          in: query
+          type: string
+          required: false
+        - name: netaddress
+          description: |
+            The IP address or hostname (including port) that the host should be
+            contacted at. If left blank, the host will automatically figure out
+            its ip address and use that. If given, the host will use the address
+            given.
+          in: query
+          type: string
+          required: false
+        - name: windowsize
+          description: |
+            The storage proof window is the number of blocks that the host has
+            to get a storage proof onto the blockchain. The window size is the
+            minimum size of window that the host will accept in a file contract.
+          in: query
+          type: string
+          required: false
+        - name: collateral
+          description: >-
+            The maximum amount of money that the host will put up as collateral
+            per byte per block of storage that is contracted by the renter.
+          in: query
+          type: string
+          required: false
+        - name: collateralbudget
+          description: >-
+            The total amount of money that the host will allocate to collateral
+            across all file contracts.
+          in: query
+          type: string
+          required: false
+        - name: maxcollateral
+          description: >-
+            The maximum amount of collateral that the host will put into a
+            single file contract.
+          in: query
+          type: string
+          required: false
+        - name: mincontractprice
+          description: |
+            The minimum price that the host will demand from a renter when
+            forming a contract. Typically this price is to cover transaction
+            fees on the file contract revision and storage proof, but can also
+            be used if the host has a low amount of collateral. The price is a
+            minimum because the host may automatically adjust the price upwards
+            in times of high demand.
+          in: query
+          type: string
+          required: false
+        - name: mindownloadbandwidthprice
+          description: |
+            The minimum price that the host will demand from a renter when the
+            renter is downloading data. If the host is saturated, the host may
+            increase the price from the minimum.
+          in: query
+          type: string
+          required: false
+        - name: minstorageprice
+          description: |
+            The minimum price that the host will demand when storing data for
+            extended periods of time. If the host is low on space, the price of
+            storage may be set higher than the minimum.
+          in: query
+          type: string
+          required: false
+        - name: minuploadbandwidthprice
+          description: |
+            The minimum price that the host will demand from a renter when the
+            renter is uploading data. If the host is saturated, the host may
+            increase the price from the minimum.
+          in: query
+          type: string
+          required: false
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /host/announce:
+    post:
+      description: >-
+        Announce the host to the network as a source of storage. Generally only
+        needs to be called once.
+      tags:
+        - Host
+      parameters:
+        - name: netaddress
+          type: string
+          description: >-
+            The address to be announced. If no address is provided, the
+            automatically discovered address will be used instead.
+          required: false
+          in: query
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /host/storage:
+    get:
+      description: gets a list of folders tracked by the host's storage manager.
+      tags:
+        - Host
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              folders:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    path:
+                      type: string
+                      example: /home/foo/bar
+                      description: >-
+                        Absolute path to the storage folder on the local
+                        filesystem.
+                    capacity:
+                      type: integer
+                      description: >
+                        Maximum capacity of the storage folder. The host will
+                        not store more
+
+                        than this many bytes in the folder. This capacity is not
+                        checked
+
+                        against the drive's remaining capacity. Therefore, you
+                        must manually
+
+                        ensure the disk has sufficient capacity for the folder
+                        at all times.
+
+                        Otherwise you risk losing renter's data and failing
+                        storage proofs.
+                      example: 50000000000
+                    capacityremaining:
+                      type: integer
+                      description: Unused capacity of the storage folder.
+                      example: 100000
+                    failedreads:
+                      type: integer
+                      description: >
+                        Number of failed disk read & write operations. A large
+                        number of
+
+                        failed reads or writes indicates a problem with the
+                        filesystem or
+
+                        drive's hardware.
+                      example: 1
+                    failedwrites:
+                      type: integer
+                      example: 0
+                    successfulreads:
+                      type: integer
+                      description: Number of successful read & write operations.
+                      example: 2
+                    successfulwrites:
+                      type: integer
+                      example: 3
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /host/storage/folders/add:
+    post:
+      description: >-
+        adds a storage folder to the manager. The manager may not check that
+        there is enough space available on-disk to support as much storage as
+        requested
+      tags:
+        - Host
+      parameters:
+        - name: path
+          type: string
+          description: Local path on disk to the storage folder to add.
+          in: query
+          required: true
+        - name: size
+          type: integer
+          description: >
+            Initial capacity of the storage folder. This value isn't validated
+            so it is possible to set the capacity of the storage folder greater
+            than the capacity of the disk. Do not do this. in: query
+          required: true
+          in: query
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /host/storage/folders/remove:
+    post:
+      description: >
+        Remove a storage folder from the manager. All storage on the folder will
+        be moved to other storage folders, meaning that no data will be lost. If
+        the manager is unable to save data, an error will be returned and the
+        operation will be stopped. 
+      tags:
+        - Host
+      parameters:
+        - name: path
+          type: string
+          in: query
+          required: true
+          description: Local path on disk to the storage folder to remove.
+        - name: force
+          type: boolean
+          in: query
+          required: false
+          description: >
+            If `force` is true, the storage folder will be removed even if the
+            data in
+
+            the storage folder cannot be moved to other storage folders,
+            typically
+
+            because they don't have sufficient capacity. If `force` is true and
+            the data
+
+            cannot be moved, data will be lost.
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /host/storage/folders/resize:
+    post:
+      description: >
+        grows or shrink a storage folder in the manager. The manager may not
+        check that there is enough space on-disk to support growing the storage
+        folder, but should gracefully handle running out of space unexpectedly.
+        When shrinking a storage folder, any data in the folder that needs to be
+        moved will be placed into other storage folders, meaning that no data
+        will be lost. If the manager is unable to migrate the data, an error
+        will be returned and the operation will be stopped.
+      tags:
+        - Host
+      parameters:
+        - name: path
+          type: string
+          in: query
+          required: true
+          description: Local path on disk to the storage folder to resize.
+        - name: newsize
+          type: integer
+          in: query
+          required: true
+          description: >-
+            Desired new size of the storage folder. This will be the new
+            capacity of the storage folder.
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  '/host/storage/sectors/delete/{merkleroot}':
+    post:
+      description: >
+        deletes a sector, meaning that the manager will be unable to upload that
+        sector and be unable to provide a storage proof on that sector. 
+
+        This endpoint is for removing the data entirely, and will remove
+        instances of the sector appearing at all heights. 
+
+        The primary purpose is to comply with legal requests to remove data.
+      tags:
+        - Host
+      parameters:
+        - name: merkleroot
+          type: string
+          in: path
+          required: true
+          description: Merkleroot of the sector to delete.
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /hostdb/active:
+    get:
+      description: |
+        lists all of the active hosts known to the renter, sorted by preference.
+      tags:
+        - HostDB
+      parameters:
+        - name: numhosts
+          type: integer
+          description: >-
+            Number of hosts to return. The actual number of hosts returned may
+            be less if there are insufficient active hosts. Optional, the
+            default is all active hosts.
+          in: query
+          required: false
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            $ref: '#/definitions/Hostdb'
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /hostdb/all:
+    get:
+      description: >
+        lists all of the hosts known to the renter. Hosts are not guaranteed to
+        be in any particular order, and the order may change in subsequent
+        calls.
+      tags:
+        - HostDB
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            $ref: '#/definitions/Hostdb'
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  '/hostdb/hosts/{pubkey}':
+    get:
+      description: >
+        fetches detailed information about a particular host, including metrics
+        regarding the score of the host within the database. It should be noted
+        that each renter uses different metrics for selecting hosts, and that a
+        good score on in one hostdb does not mean that the host will be
+        successful on the network overall.
+      tags:
+        - HostDB
+      parameters:
+        - name: pubkey
+          in: path
+          description: >-
+            The public key of the host. Each public key identifies a single
+            host.
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              entry:
+                type: object
+                properties:
+                  acceptingcontracts:
+                    type: boolean
+                    description: true if the host is accepting new contracts.
+                    example: true
+                  maxdownloadbatchsize:
+                    type: integer
+                    description: >-
+                      Maximum number of bytes that the host will allow to be
+                      requested by a single download request.
+                    example: 17825792
+                  maxduration:
+                    type: integer
+                    description: >
+                      Maximum duration in blocks that a host will allow for a
+                      file contract.
+
+                      The host commits to keeping files for the full duration
+                      under the
+
+                      threat of facing a large penalty for losing or dropping
+                      data before
+
+                      the duration is complete. The storage proof window of an
+                      incoming file
+
+                      contract must end before the current height + maxduration.
+
+                      There is a block approximately every 10 minutes.
+
+                      e.g. 1 day = 144 blocks
+                    example: 25920
+                  maxrevisebatchsize:
+                    type: integer
+                    description: >
+                      Maximum size in bytes of a single batch of file contract
+
+                      revisions. Larger batch sizes allow for higher throughput
+                      as there is
+
+                      significant communication overhead associated with
+                      performing a batch
+
+                      upload.
+                    example: 17825792
+                  netaddress:
+                    type: string
+                    description: >-
+                      Remote address of the host. It can be an IPv4, IPv6, or
+                      hostname, along with the port. IPv6 addresses are enclosed
+                      in square brackets.
+                    example: '123.456.789.0:9982'
+                  remainingstorage:
+                    type: integer
+                    description: 'Unused storage capacity the host claims it has, in bytes.'
+                    example: 35000000000
+                  sectorsize:
+                    type: integer
+                    description: >-
+                      Smallest amount of data in bytes that can be uploaded or
+                      downloaded to or from the host.
+                    example: 4194304
+                  totalstorage:
+                    type: integer
+                    description: >-
+                      Total amount of storage capacity the host claims it has,
+                      in bytes.
+                    example: 35000000000
+                  unlockhash:
+                    type: string
+                    description: >-
+                      Address at which the host can be paid when forming file
+                      contracts.
+                    example: >-
+                      0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab
+                  windowsize:
+                    type: integer
+                    description: >
+                      A storage proof window is the number of blocks that the
+                      host has to
+
+                      get a storage proof onto the blockchain. The window size
+                      is the
+
+                      minimum size of window that the host will accept in a file
+                      contract.
+                    example: 144
+                  publickey:
+                    type: object
+                    description: Public key used to identify and verify hosts.
+                    properties:
+                      algorithm:
+                        type: string
+                        description: >-
+                          Algorithm used for signing and verification. Typically
+                          "ed25519".
+                        example: ed25519
+                      key:
+                        type: string
+                        description: Key used to verify signed host messages.
+                        example: RW50cm9weSBpc24ndCB3aGF0IGl0IHVzZWQgdG8gYmU=
+                  publickeystring:
+                    type: string
+                    description: >-
+                      The string representation of the full public key, used
+                      when calling /hostdb/hosts.
+                    example: >-
+                      ed25519:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+                  scorebreakdown:
+                    type: object
+                    description: >
+                      A set of scores as determined by the renter. Generally,
+                      the host's final
+
+                      final score is all of the values multiplied together.
+                      Modified renters may
+
+                      have additional criteria that they use to judge a host, or
+                      may ignore
+
+                      certin criteia. In general, these fields should only be
+                      used as a loose
+
+                      guide for the score of a host, as every renter sees the
+                      world differently
+
+                      and uses different metrics to evaluate hosts.
+                    properties:
+                      score:
+                        type: integer
+                        description: >
+                          The overall score for the host. Scores are entriely
+                          relative, and are
+
+                          consistent only within the current hostdb. Between
+                          different machines,
+
+                          different configurations, and different versions the
+                          absolute scores for
+
+                          a given host can be off by many orders of magnitude.
+                          When displaying to a
+
+                          human, some form of normalization with respect to the
+                          other hosts (for
+
+                          example, divide all scores by the median score of the
+                          hosts) is
+
+                          recommended.
+                        example: 123456
+                      ageadjustment:
+                        type: integer
+                        description: >-
+                          The multiplier that gets applied to the host based on
+                          how long it has been a host. Older hosts typically
+                          have a lower penalty.
+                        example: 0.1234
+                      burnadjustment:
+                        type: integer
+                        description: >-
+                          The multiplier that gets applied to the host based on
+                          how much proof-of-burn the host has performed. More
+                          burn causes a linear increase in score.
+                        example: 23.456
+                      collateraladjustment:
+                        type: integer
+                        description: >-
+                          The multiplier that gets applied to a host based on
+                          how much collateral the host is offering. More
+                          collateral is typically better, though above a point
+                          it can be detrimental.
+                        example: 23.456
+                      priceadjustment:
+                        type: integer
+                        description: >-
+                          The multiplier that gets applied to a host based on
+                          the host's price. Lower prices are almost always
+                          better. Below a certain, very low price, there is no
+                          advantage.
+                        example: 0.1234
+                      storageremainingadjustment:
+                        type: integer
+                        description: >-
+                          The multiplier that gets applied to a host based on
+                          how much storage is remaining for the host. More
+                          storage remaining is better, to a point.
+                        example: 0.1234
+                      uptimeadjustment:
+                        type: integer
+                        description: >-
+                          The multiplier that gets applied to a host based on
+                          the uptime percentage of the host. The penalty
+                          increases extremely quickly as uptime drops below 90%.
+                        example: 0.1234
+                      versionadjustment:
+                        type: integer
+                        description: >
+                          The multiplier that gets applied to a host based on
+                          the version of Sia
+
+                          that they are running. Versions get penalties if there
+                          are known bugs,
+
+                          scaling limitations, performance limitations, etc.
+                          Generally, the most
+
+                          recent version is always the one with the highest
+                          score.
+                        example: 0.1234
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /miner:
+    get:
+      description: returns the status of the miner.
+      tags:
+        - Miner
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              blocksmined:
+                type: integer
+                description: >-
+                  Number of mined blocks. This value is remembered after
+                  restarting.
+                example: 9001
+              cpuhashrate:
+                type: integer
+                description: 'How fast the cpu is hashing, in hashes per second.'
+                example: 1337
+              cpumining:
+                type: boolean
+                description: true if the cpu miner is active.
+                example: false
+              staleblocksmined:
+                description: >
+                  Number of mined blocks that are stale, indicating that they
+                  are not
+
+                  included in the current longest chain, likely because some
+                  other block at
+
+                  the same height had its chain extended first.
+                type: integer
+                example: 0
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /miner/start:
+    get:
+      description: >-
+        starts a single threaded cpu miner. Does nothing if the cpu miner is
+        already running.
+      tags:
+        - Miner
+      responses:
+        '200':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /miner/stop:
+    get:
+      description: stops the cpu miner. Does nothing if the cpu miner is not running.
+      tags:
+        - Miner
+      responses:
+        '200':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /miner/header:
+    get:
+      description: provides a block header that is ready to be grinded on for work.
+      tags:
+        - Miner
+      produces:
+        - application/octet-stream
+      responses:
+        '200':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+    post:
+      description: submits a header that has passed the POW.
+      tags:
+        - Miner
+      consumes:
+        - application/octet-stream
+      responses:
+        '200':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /daemon/constants:
+    get:
+      tags:
+        - Daemon
+      description: Returns the set of constants in use.
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              genesistimestamp:
+                type: integer
+                example: 1433600000
+                description: Timestamp of the genesis block.
+              blocksizelimit:
+                type: integer
+                example: 2000000
+                description: >
+                  Maximum size, in bytes, of a block. Blocks larger than this
+                  will be
+
+                  rejected by peers.
+              blockfrequency:
+                type: integer
+                example: 600
+                description: Target for how frequently new blocks should be mined.
+              extremefuturethreshold:
+                type: integer
+                example: 10800
+                description: >
+                  Farthest a block's timestamp can be in the future before the
+                  block is
+
+                  rejected outright.
+              targetwindow:
+                type: integer
+                example: 1000
+                description: Height of the window used to adjust the difficulty.
+              mediantimestampwindow:
+                type: integer
+                example: 11
+                description: Duration of the window used to adjust the difficulty.
+              futurethreshold:
+                type: integer
+                example: 10800
+                description: >
+                  How far in the future a block can be without being rejected. A
+                  block
+
+                  further into the future will not be accepted immediately, but
+                  the daemon
+
+                  will attempt to accept the block as soon as it is valid.
+              siafundcount:
+                type: integer
+                example: 10000
+                description: Total number of siafunds.
+              siafundportion:
+                type: string
+                example: 39/1000
+                description: >-
+                  Fraction of each file contract payout given to siafund
+                  holders.
+              maturitydelay:
+                type: integer
+                example: 144
+                description: >
+                  Number of children a block must have before it is considered
+                  "mature."
+              initialcoinbase:
+                type: integer
+                example: 300000
+                description: >
+                  Number of coins given to the miner of the first block. Note
+                  that elsewhere
+
+                  in the API currency is typically returned in hastings and as a
+                  bignum.
+
+                  This is not the case here.
+              minimumcoinbase:
+                type: integer
+                example: 30000
+                description: >
+                  Minimum number of coins paid out to the miner of a block (the
+                  coinbase
+
+                  decreases with each block). Note that elsewhere in the API
+                  currency is
+
+                  typically returned in hastings and as a bignum. This is not
+                  the case
+
+                  here.
+              roottarget:
+                type: array
+                items:
+                  type: integer
+                description: Initial target
+              rootdepth:
+                type: array
+                items:
+                  type: integer
+                description: Initial depth
+              maxadjustmentup:
+                type: string
+                example: 5/2
+                description: >-
+                  Largest allowed ratio between the old difficulty and the new
+                  difficulty.
+              maxadjustmentdown:
+                type: string
+                example: 2/5
+                description: >-
+                  Smallest allowed ratio between the old difficulty and the new
+                  difficulty.
+              siacoinprecision:
+                type: string
+                example: '1e+24'
+                description: Number of Hastings in one siacoin.
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /daemon/stop:
+    get:
+      tags:
+        - Daemon
+      description: cleanly shuts down the daemon. May take a few seconds.
+      responses:
+        '200':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /daemon/version:
+    get:
+      tags:
+        - Daemon
+      description: returns the version of the Sia daemon currently running.
+      responses:
+        '200':
+          description: returns the version of the Sia daemon currently running.
+          schema:
+            properties:
+              version:
+                type: string
+                example: 1.0.0
+                description: >
+                  Version number of the running Sia Daemon. This number is
+                  visible to its
+
+                  peers on the network.
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /consensus:
+    get:
+      description: >-
+        returns information about the consensus set, such as the current block
+        height.
+      tags:
+        - Consensus
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              synced:
+                type: boolean
+                description: >-
+                  True if the consensus set is synced with the network, i.e. it
+                  has downloaded the entire blockchain.
+              height:
+                type: integer
+                description: Number of blocks preceding the current block.
+                example: 62248
+              currentblock:
+                type: string
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /consensus/validate/transactionset:
+    post:
+      tags:
+        - Consensus
+      description: validates a set of transactions using the current utxo set.
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/TransactionSet'
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /gateway:
+    get:
+      tags:
+        - Gateway
+      description: >-
+        returns information about the gateway, including the list of connected
+        peers.
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              netaddress:
+                type: string
+                description: >
+                  netaddress is the network address of the gateway as seen by
+                  the rest of
+
+                  the network. The address consists of the external IP address
+                  and the
+
+                  port Sia is listening on. It represents a
+                  `modules.NetAddress`.
+              peers:
+                type: array
+                description: >-
+                  peers is an array of peers the gateway is connected to. It
+                  represents an array of `modules.Peer`s.
+                items:
+                  type: object
+                  properties:
+                    netaddress:
+                      type: string
+                      description: >-
+                        netaddress is the address of the peer. It represents a
+                        `modules.NetAddress`.
+                    version:
+                      type: string
+                      description: version is the version number of the peer.
+                    inbound:
+                      type: boolean
+                      description: >
+                        inbound is true when the peer initiated the connection.
+                        This field
+
+                        is exposed as outbound peers are generally trusted more
+                        than inbound
+
+                        peers, as inbound peers are easily manipulated by an
+                        adversary.
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  '/gateway/connect/{netaddress}':
+    post:
+      description: >-
+        connects the gateway to a peer. The peer is added to the node list if it
+        is not already present. The node list is the list of all nodes the
+        gateway knows about, but is not necessarily connected to.
+      tags:
+        - Gateway
+      parameters:
+        - name: netaddress
+          description: >
+            address of the peer to connect to. It should be a
+
+            reachable ip address and port number, of the form IP:port. IPV6
+            addresses
+
+            must be enclosed in square brackets.
+          in: path
+          type: string
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  '/gateway/disconnect/{netaddress}':
+    post:
+      description: >-
+        disconnects the gateway from a peer. The peer remains in the node list.
+        Disconnecting from a peer does not prevent the gateway from
+        automatically connecting to the peer in the future.
+      tags:
+        - Gateway
+      parameters:
+        - name: netaddress
+          description: >
+            address of the peer to connect to. It should be a reachable ip
+            address and port number, of the form IP:port. IPV6 addresses must be
+            enclosed in square brackets.
+          in: path
+          type: string
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter:
+    get:
+      description: >-
+        returns the current settings along with metrics on the renter's
+        spending.
+      tags:
+        - Renter
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              settings:
+                type: object
+                description: Settings that control the behavior of the renter.
+                properties:
+                  allowance:
+                    type: object
+                    description: >-
+                      Allowance dictates how much the renter is allowed to spend
+                      in a given period. Note that funds are spent on both
+                      storage and bandwidth.
+                    properties:
+                      funds:
+                        type: string
+                        description: >-
+                          Amount of money allocated for contracts. Funds are
+                          spent on both storage and bandwidth.
+                        example: '1234'
+                      hosts:
+                        type: integer
+                        format: int64
+                        description: Number of hosts that contracts will be formed with.
+                        example: 24
+                      period:
+                        type: integer
+                        format: int64
+                        description: 'Duration of contracts formed, in number of blocks.'
+                        example: 6048
+                      renewwindow:
+                        type: integer
+                        format: int64
+                        description: >-
+                          If the current blockheight + the renew window >= the
+                          height the contract is scheduled to end, the contract
+                          is renewed automatically. Is always nonzero.
+                        example: 3024
+                  maxuploadspeed:
+                    type: integer
+                    format: int64
+                    description: >-
+                      bytes per second. 
+                      MaxUploadSpeed by defaul is unlimited but can be set by the user to 
+                      manage bandwidth
+                    example: 1234
+                  maxdownloadspeed:
+                    type: integer
+                    format: int64
+                    description: >-
+                      bytes per second.                    
+                      MaxDownloadSpeed by defaul is unlimited but can be set by the user to 
+                      manage bandwidth
+                    example: 1234
+                  streamcachesize:
+                    type: integer
+                    format: int64
+                    description: >-
+                      The StreamCacheSize is the number of data chunks that will be cached during
+                      streaming
+                    example: 4
+              financialmetrics:
+                type: object
+                description: >-
+                  Metrics about how much the Renter has spent on storage,
+                  uploads, and downloads.
+                properties:
+                  contractfees:
+                    type: string
+                    description: >-
+                      Amount of money spent on contract fees, transaction fees and siafund fees.
+                      In hastings.
+                    example: "1234"
+                  totalallocated:
+                    type: string
+                    description: >- 
+                      Total amount of money that the renter has put into contracts. Includes
+                      spent money and also money that will be returned to the renter.
+                      In hastings.
+                    example: "1234"
+                  contractspending:
+                    type: string
+                    description: >-
+                      How much money, in hastings, the Renter has spent on file
+                      contracts, including fees.
+                      (deprecated, now totalallocated)
+                    example: '1234'
+                  downloadspending:
+                    type: string
+                    description: Amount of money spent on downloads.
+                    example: '5678'
+                  storagespending:
+                    type: string
+                    description: Amount of money spend on storage.
+                    example: '1234'
+                  uploadspending:
+                    type: string
+                    description: Amount of money spent on uploads.
+                    example: '5678'
+                  unspent:
+                    type: string
+                    description: Amount of money in the allowance that has not been spent.
+                    example: '1234'
+              currentperiod:
+                type: string
+                description: Height at which the current allowance period began.
+                example: '200'
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+    post:
+      description: modify settings that control the renter's behavior.
+      tags:
+        - Renter
+      parameters:
+        - name: funds
+          description: Number of hastings allocated for file contracts in the given period.
+          in: query
+          type: string
+        - name: hosts
+          description: >-
+            Number of hosts that contracts should be formed with. Files cannot
+            be uploaded to more hosts than you have contracts with, and it's
+            generally good to form a few more contracts than you need.
+          in: query
+          type: integer
+          format: int64
+        - name: period
+          description: Duration of contracts formed. Must be nonzero.
+          in: query
+          type: integer
+        - name: renewwindow
+          description: >-
+            Renew window specifies how many blocks before the expiration of the
+            current contracts the renter will wait before renewing the
+            contracts. A smaller renew window means that Sia must be run more
+            frequently, but also means fewer total transaction fees. Storage
+            spending is not affected by the renew window size.
+          in: query
+          type: integer
+          format: int64
+        - name: maxdownloadspeed
+          description: >-
+            Max download speed permitted, speed provide in bytes per second.
+          in: query
+          type: integer
+          format: int64
+        - name: maxuploadspeed
+          description: >-
+            Max upload speed permitted, speed provide in bytes per second
+          in: query 
+          type: integer
+          format: int64
+        - name: streamcachesize
+          description: >- 
+            Stream cache size specifies how many data chunks will be cached while 
+            streaming.  
+          in: query
+          type: integer
+          format: int64
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter/contracts:
+    get:
+      description: returns active contracts. Expired contracts are not included.
+      tags:
+        - Renter
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              contracts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    downloadspending:
+                      type: string
+                      description: >-
+                        Amount of contract funds that have been spent on downloads.
+                        In hastings.
+                      example: "1234"
+                    endheight:
+                      type: integer
+                      format: int64
+                      description: Block height that the file contract ends on.
+                      example: 50000
+                    fees:
+                      type: string
+                      description: >-
+                        Fees paid in order to form the file contract.
+                      example: "1234"
+                    hostpublickey:
+                      type: object
+                      description: >-
+                        Public key of the host the contract was formed with.
+                      properties:
+                        algorithm:
+                          type: string
+                          example: ed25519
+                        key:
+                          type: string
+                          example: RW50cm9weSBpc24ndCB3aGF0IGl0IHVzZWQgdG8gYmU
+                    id:
+                      type: string
+                      description: ID of the file contract
+                      example: >-
+                        1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+                    lasttransaction:
+                      type: object
+                      description: >-
+                        A signed transaction containing the most recent contract
+                        revision.
+                    netaddress:
+                      type: string
+                      description: Address of the host the file contract was formed with.
+                      example: "12.34.56.78:9"
+                    renterfunds:
+                      type: string
+                      description: >-
+                        Remaining funds left for the renter to spend on uploads
+                        & downloads.
+                      example: "1234"
+                    size:
+                      type: integer
+                      format: int64
+                      description: >-
+                        Size of the file contract, which is typically equal to
+                        the number of bytes that have been uploaded to the host.
+                      example: 8192
+                    startheight:
+                      type: integer
+                      format: int64
+                      description: >-
+                        Block height that the file contract began on.
+                      example: 50000
+                    storagespending:
+                      type: string
+                      description: >-
+                        Amount of contract funds that have been spent on storage.
+                      example: "1234"
+                    totalcost:
+                      type: string
+                      description: >-
+                        Total cost to the wallet of forming the file contract.
+                        This includes both the fees and the funds allocated in the contract.
+                      example: "1234"
+                    uploadspending:
+                      type: string
+                      description: >-
+                        Amount of contract funds that have been spent on uploads.
+                      example: "1234"
+                    goodforupload:
+                      type: boolean
+                      description: >-
+                        Signals if contract is good for uploading data
+                      example: true
+                    goodforrenew:
+                      type: boolean
+                      description: >-
+                        Signals if contract is good for a renewal
+                      example: false
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter/downloads:
+    get:
+      description: lists all files in the download queue.
+      tags:
+        - Renter
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              downloads:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    destination:
+                      type: string
+                      description: Local path that the file will be downloaded to.
+                      example: /home/users/alice
+                    destinationtype:
+                      type: string 
+                      description: >-
+                        What type of destination was used. Can be "file", indicating a download
+                        to disk, can be "buffer", indicating a download to memory, and can be
+                        "http stream", indicating that the download was streamed through the
+                        http API.
+                      example: file
+                    length:
+                      type: integer
+                      format: int64
+                      description: >-
+                        Length of the download. If the download was a partial download, this
+                        will indicate the length of the partial download, and not the length of
+                        the full file.
+                      example: 8192
+                    offset:
+                      type: integer
+                      format: int64
+                      description: >-
+                        Offset within the file of the download. For full file downloads, the 
+                        offset will be '0'. For partial downloads, the offset may be anywhere 
+                        within the file. offset+length will never exceed the full file size.
+                      example: 0
+                    siapath:
+                      type: string
+                      description: Siapath given to the file when it was uploaded.
+                      example: foo/bar.txt
+                    completed:
+                      type: boolean
+                      description: >-
+                        Whether or not the download has completed. Will be false initially, and
+                        set to true immediately as the download has been fully written out to
+                        the file, to the http stream, or to the in-memory buffer. Completed
+                        will also be set to true if there is an error that causes the download to
+                        fail.
+                      example: true
+                    endtime:
+                      type: string
+                      description: >-
+                        Time at which the download completed in RFC 3339 time.
+                        Will be zero if the download has not yet completed.
+                      example: "2009-11-10T23:00:00Z"
+                    error:
+                      type: string
+                      description: >-
+                        Error encountered while downloading. If there was no error (yet), it
+                        will be the empty string.
+                      example: ""
+                    received:
+                      type: integer
+                      format: int64                    
+                      description: >-
+                        Number of bytes downloaded thus far. Will only be updated as segments
+                        of the file complete fully. This typically has a resolution of tens of
+                        megabytes.
+                      example: 4096
+                    starttime:
+                      type: string
+                      description: >-
+                        Time at which the download was initiated in RFC 3339.
+                      example: "2009-11-10T23:00:00Z"
+                    totaldatatransfered:
+                      type: integer
+                      format: int64
+                      description: >-
+                        The total amount of data transfered when downloading the file. This
+                        will eventually include data transferred during contract + payment
+                        negotiation, as well as data from failed piece downloads.
+                      example: 10321
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter/files:
+    get:
+      description: lists the status of all files.
+      tags:
+        - Renter
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              files:
+                type: array
+                items:
+                  $ref: "#/definitions/FileInfo"
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter/file/{siapath}:
+    get:
+      description: >-
+        lists the status of specified file.
+      tags:
+        - Renter
+      parameters:
+        - name: siapath
+          description: Location of the file in the renter on the network.
+          in: path
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              file:
+                $ref: "#/definitions/FileInfo"
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter/prices:
+    get:
+      description: >-
+        lists the estimated prices of performing various storage and data
+        operations.
+      tags:
+        - Renter
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              downloadterabyte:
+                description: >-
+                  The estimated cost of downloading one terabyte of data from
+                  the network.                  
+                type: string
+                example: '1234'
+              formcontracts:
+                description: >-
+                  The estimated cost of forming a set of contracts on the
+                  network. This cost also applies to the estimated cost of
+                  renewing the renter's set of contracts.                
+                type: string
+                example: '1234'
+              storageterabytemonth:
+                description: >-
+                  The estimated cost of storing one terabyte of data on the
+                  network for a month, including accounting for redundancy.
+                type: string
+                example: '1234'
+              uploadterabyte:
+                description: >-
+                  The estimated cost of uploading one terabyte of data to the
+                  network, including accounting for redundancy.
+                type: string
+                example: '1234'
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  '/renter/delete/{siapath}':
+    post:
+      description: >-
+        deletes a renter file entry. Does not delete any downloads or original
+        files, only the entry in the renter.
+      tags:
+        - Renter
+      parameters:
+        - name: siapath
+          description: Location of the file in the renter on the network.
+          in: path
+          type: string
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  '/renter/download/{siapath}':
+    get:
+      description: >-
+        downloads a file to the local filesystem. The call will block until the
+        file has been downloaded.
+      tags:
+        - Renter
+      parameters:
+        - name: siapath
+          description: Location of the file in the renter on the network.
+          in: path
+          type: string
+          required: true
+        - name: async
+          type: boolean
+          in: query
+          description: >-
+            If async is true, the http request will be non blocking. Can't be used with
+        - name: destination
+          type: string
+          in: query
+          description: >- 
+            Location on disk that the file will be downloaded to.
+          required: true
+        - name: httpresp
+          type: boolean
+          in: query
+          description: >-
+            If httresp is true, the data will be written to the http response.
+        - name: length
+          type: integer
+          format: int64
+          in: query 
+          description: >-
+            Length of the requested data. Has to be <= filesize-offset.
+        - name: offset
+          type: integer
+          format: int64
+          in: query
+          description: >-
+            Offset relative to the file start from where the download starts.
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  '/renter/downloadasync/{siapath}':
+    get:
+      description: >-
+        downloads a file to the local filesystem. The call will return
+        immediately.
+      tags:
+        - Renter
+      parameters:
+        - name: siapath
+          description: Location of the file in the renter on the network.
+          in: path
+          type: string
+          required: true
+        - name: destination
+          description: Location on disk that the file will be downloaded to.
+          in: query
+          type: string
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  '/renter/rename/{siapath}':
+    post:
+      description: >-
+        renames a file. Does not rename any downloads or source files, only
+        renames the entry in the renter. An error is returned if siapath does
+        not exist or newsiapath already exists.
+      tags:
+        - Renter
+      parameters:
+        - name: siapath
+          description: Location of the file in the renter on the network.
+          in: path
+          type: string
+          required: true
+        - name: newsiapath
+          description: New location of the file in the renter on the network.
+          in: query
+          type: string
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  "/renter/stream/{siapath}":
+    get:
+      description: >-
+        downloads a file using http streaming.
+        This call blocks until the data is received.
+        The streaming endpoint also uses caching internally to prevent siad
+        from redownloading the same chunk multiple times
+        when only parts of a file are requested at once.
+        This might lead to a substantial increase in ram usage and therefore
+        it is not recommended to stream multiple files in parallel at the moment.
+        This restriction will be removed together with the caching
+        once partial downloads are supported in the future.      
+      tags:
+        - Renter
+      parameters:
+        - name: siapath
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+
+  '/renter/upload/{siapath}':
+    post:
+      description: uploads a file to the network from the local filesystem.
+      tags:
+        - Renter
+      parameters:
+        - name: siapath
+          type: string
+          in: path
+          description: >- 
+            Location where the file will reside in the renter on the network. The path
+            must be non-empty, may not include any path traversal strings ("./", "../"),
+            and may not begin with a forward-slash character.
+          required: true
+        - name: datapieces
+          type: integer
+          format: int64
+          in: query
+          description: >-
+            The number of data pieces to use when erasure coding the file.
+        - name: paritypieces
+          type: integer
+          format: int64
+          in: query
+          description: >-
+            The number of parity pieces to use when erasure coding the file.
+            Total redundancy of the file is
+            (datapieces+paritypieces)/datapieces.
+        - name: source
+          type: string
+          in: query
+          description: >-
+            Location on disk of the file being uploaded.
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet:
+    get:
+      description: >-
+        returns basic information about the wallet,  such as whether the wallet
+        is locked or unlocked.
+      tags:
+        - Wallet
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              encrypted:
+                description: >-
+                  Indicates whether the wallet has been encrypted or not. If the
+                  wallet has not been encrypted, then no data has been generated
+                  at all, and the first time the wallet is unlocked, the
+                  password given will be used as the password for encrypting all
+                  of the data. 'encrypted' will only be set to false if the
+                  wallet has never been unlocked before (the unlocked wallet is
+                  still encryped - but the encryption key is in memory).
+                type: boolean
+                example: true
+              unlocked:
+                description: >-
+                  Indicates whether the wallet is currently locked or unlocked.
+                  Some calls become unavailable when the wallet is locked.
+                type: boolean
+                example: true
+              rescanning:
+                description: >-
+                  Indicates whether the wallet is currently rescanning the
+                  blockchain. This will be true for the duration of calls to
+                  /unlock, /seeds, /init/seed, and /sweep/seed.
+                type: boolean
+                example: false
+              confirmedsiacoinbalance:
+                description: >-
+                  Number of siacoins, in hastings, available to the wallet as of
+                  the most recent block in the blockchain.
+                type: string
+                example: '123456'
+              unconfirmedoutgoingsiacoins:
+                description: >-
+                  Number of siacoins, in hastings, that are leaving the wallet
+                  according to the set of unconfirmed transactions. Often this
+                  number appears inflated, because outputs are frequently larger
+                  than the number of coins being sent, and there is a refund.
+                  These coins are counted as outgoing, and the refund is counted
+                  as incoming. The difference in balance can be calculated using
+                  'unconfirmedincomingsiacoins' -
+                  'unconfirmedoutgoingsiacoins'  
+                type: string
+                example: '0'
+              unconfirmedincomingsiacoins:
+                description: >-
+                  Number of siacoins, in hastings, are entering the wallet
+                  according to the set of unconfirmed transactions. This number
+                  is often inflated by outgoing siacoins, because outputs are
+                  frequently larger than the amount being sent. The refund will
+                  be included in the unconfirmed incoming siacoins balance.
+                type: string
+                example: '789'
+              siafundbalance:
+                description: >-
+                  Number of siafunds available to the wallet as of the most
+                  recent block in the blockchain.
+                type: string
+                example: '1'
+              siacoinclaimbalance:
+                description: >-
+                  Number of siacoins, in hastings, that can be claimed from the
+                  siafunds as of the most recent block. Because the claim
+                  balance increases every time a file contract is created, it is
+                  possible that the balance will increase before any claim
+                  transaction is confirmed.
+                type: string
+                example: '9001'
+              dustthreshold:
+                description: >-
+                  Number of siacoins, in hastings per byte, below which a
+                  transaction output cannot be used because the wallet considers
+                  it a dust output
+                type: string
+                example: '1234'
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/033x:
+    post:
+      description: >-
+        loads a v0.3.3.x wallet into the current wallet, harvesting all of the
+        secret keys. All spendable addresses in the loaded wallet will become
+        spendable from the current wallet. An error will be returned if the
+        given encryptionpassword is incorrect.
+      tags:
+        - Wallet
+      parameters:
+        - name: source
+          description: Path on disk to the v0.3.3.x wallet to be loaded.
+          in: query
+          type: string
+        - name: encryptionpassword
+          description: Encryption key of the wallet.
+          in: query
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/address:
+    get:
+      description: >-
+        gets a new address from the wallet generated by the primary seed. An
+        error will be returned if the wallet is locked.
+      tags:
+        - Wallet
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              address:
+                description: >-
+                  Wallet address that can receive siacoins or siafunds. 
+                  Addresses are 76 character long hex strings.
+                type: string
+                example: >-
+                  1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/addresses:
+    get:
+      description: >-
+        fetches the list of addresses from the wallet.  If the wallet has not
+        been created or unlocked, no addresses will be returned. After the
+        wallet is unlocked, this call will continue to return its addresses 
+        even after the wallet is locked again.
+      tags:
+        - Wallet
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              addresses:
+                description: Array of wallet addresses owned by the wallet.
+                type: array
+                items:
+                  type: string
+                example:
+                  addresses:
+                    - >-
+                      1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab
+                    - >-
+                      aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                    - >-
+                      bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/backup:
+    get:
+      description: >-
+        creates a backup of the wallet settings file. Though this can easily be
+        done manually, the settings file is often in an unknown or difficult to
+        find location. The /wallet/backup call can spare users the trouble of
+        needing to find their wallet file. The destination file is overwritten
+        if it already exists.
+      tags:
+        - Wallet
+      parameters:
+        - name: destination
+          description: path to the location on disk where the backup file will be saved.
+          in: query
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/init:
+    post:
+      description: >-
+        initializes the wallet. After the wallet has been initialized once, it
+        does not need to be initialized again, and future calls to /wallet/init
+        will return an error, unless the force flag is set. The encryption
+        password is provided by the api call. If the password is blank, then the
+        password will be set to the same as the seed.
+      tags:
+        - Wallet
+      parameters:
+        - name: encryptionpassword
+          description: >-
+            Password that will be used to encrypt the wallet. All subsequent
+            calls should use this password. If left blank, the seed that gets
+            returned will also be the encryption password.
+          in: query
+          type: string
+        - name: dictionary
+          description: >-
+            Name of the dictionary that should be used when encoding the seed.
+            'english' is the most common choice when picking a dictionary.
+          in: query
+          type: string
+        - name: force
+          description: >-
+            boolean, when set to true /wallet/init will Reset the wallet if one
+            exists instead of returning an error. This allows API callers to
+            reinitialize a new wallet.
+          in: query
+          type: boolean
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              primaryseed:
+                description: >-
+                  Wallet seed used to generate addresses that the wallet is able
+                  to spend.
+                type: string
+                example: >-
+                  hello world hello world hello world hello world hello world
+                  hello world  hello world hello world hello world hello world
+                  hello world hello world  hello world hello world hello
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/init/seed:
+    post:
+      description: >-
+        initializes the wallet using a preexisting seed.  After the wallet has
+        been initialized once, it does not need to be initialized again, and
+        future calls to /wallet/init/seed will return an error unless the force
+        flag is set. The encryption password is provided by the api call. If the
+        password is blank, then the password will be set to the same as the
+        seed. Note that loading a preexisting seed requires scanning the
+        blockchain to determine how many keys have been generated from the seed.
+        For this reason, /wallet/init/seed can only be called if the blockchain
+        is synced.
+      tags:
+        - Wallet
+      parameters:
+        - name: encryptionpassword
+          description: >-
+            Password that will be used to encrypt the wallet. All subsequent
+            calls should use this password. If left blank, the seed that gets
+            returned will also be the encryption password.
+          in: query
+          type: string
+          required: true
+        - name: dictionary
+          description: >-
+            Name of the dictionary that should be used when encoding the seed.
+            'english' is the most common choice when picking a dictionary.
+          in: query
+          type: string
+        - name: seed
+          description: >-
+            Dictionary-encoded phrase that corresponds to the seed being used to
+            initialize the wallet.
+          in: query
+          type: string
+          required: true
+        - name: force
+          description: >-
+            boolean, when set to true /wallet/init will Reset the wallet if one
+            exists instead of returning an error. This allows API callers to
+            reinitialize a new wallet.
+          in: query
+          type: boolean
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/seed:
+    post:
+      description: >-
+        gives the wallet a seed to track when looking for incoming transactions.
+        The wallet will be able to spend outputs related to addresses created by
+        the seed. The seed is added as an auxiliary seed, and does not replace
+        the primary seed. Only the primary seed will be used for generating new
+        addresses.
+      tags:
+        - Wallet
+      parameters:
+        - name: encryptionpassword
+          description: Key used to encrypt the new seed when it is saved to disk.
+          in: query
+          type: string
+          required: true
+        - name: dictionary
+          description: >-
+            Name of the dictionary that should be used when encoding the seed.
+            'english' is the most common choice when picking a
+            dictionary.          
+          in: query
+          type: string
+        - name: seed
+          description: >-
+            Dictionary-encoded phrase that corresponds to the seed being added
+            to the wallet.
+          in: query
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/seeds:
+    get:
+      description: >-
+        returns a list of seeds in use by the wallet.  The primary seed is the
+        only seed that gets used to generate new addresses. This call is
+        unavailable when the wallet is locked.
+
+        A seed is an encoded version of a 128 bit random seed. The output is 15
+        words chosen from a small dictionary as indicated by the input. The most
+        common choice for the dictionary is going to be 'english'. The
+        underlying seed is the same no matter what dictionary is used for the
+        encoding. The encoding also contains a small checksum of the seed,  to
+        help catch simple mistakes when copying. The library entropy-mnemonics
+        is used when encoding.      
+      tags:
+        - Wallet
+      parameters:
+        - name: dictionary
+          description: >-
+            Name of the dictionary that should be used when encoding the seed.
+            'english' is the most common choice when picking a dictionary.
+          in: query
+          type: string
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              primaryseed:
+                description: >-
+                  Seed that is actively being used to generate new addresses for
+                  the wallet.
+                type: string
+                example: >-
+                  hello world hello world hello world hello world hello world
+                  hello world  hello world hello world hello world hello world
+                  hello world hello world  hello world hello world hello
+              addressesremaining:
+                description: >-
+                  Number of addresses that remain in the primary seed until
+                  exhaustion has been reached. Once exhaustion has been reached,
+                  new addresses will continue to be generated but they will be
+                  more difficult to recover in the event of a lost wallet file
+                  or encryption password.
+                type: integer
+                format: int64
+                example: 2500
+              allseeds:
+                description: >-
+                  Array of all seeds that the wallet references when scanning
+                  the blockchain for outputs. The wallet is able to spend any
+                  output generated by any of the seeds, however only the primary
+                  seed is being used to generate new addresses.
+                type: array
+                items:
+                  type: string
+                example:
+                  - >-
+                    hello world hello world hello world hello world hello world
+                    hello world hello world hello world hello world hello world
+                    hello world hello world hello world hello world hello
+                  - >-
+                    foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo
+                    bar foo bar foo bar foo bar foo bar foo bar foo bar foo
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/siacoins:
+    post:
+      description: >-
+        Send siacoins to an address or set of addresses. The outputs are
+        arbitrarily selected from addresses in the wallet. If 'outputs' is
+        supplied, 'amount' and 'destination' must be empty. The number of
+        outputs should not exceed 400; this may result in a transaction too
+        large to fit in the transaction pool.
+      tags:
+        - Wallet
+      parameters:
+        - name: amount
+          description: >-
+            Number of hastings being sent. A hasting is the smallest unit in
+            Sia. There are 10^24 hastings in a siacoin.
+          in: query
+          type: integer
+        - name: destination
+          description: Address that is receiving the coins.
+          in: query
+          type: string
+        - name: outputs
+          description: >-
+            JSON array of outputs. The structure of each output is:
+            {"unlockhash": "<destination>", "value": "<amount>"}
+          in: query
+          type: string
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              transactionids:
+                description: >-
+                  Array of IDs of the transactions that were created when
+                  sending the coins. The last transaction contains the output
+                  headed to the 'destination'. Transaction IDs are 64 character
+                  long hex strings.                
+                type: array
+                items:
+                  type: string
+                example:
+                  - >-
+                    1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+                  - >-
+                    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                  - >-
+                    bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/siafunds:
+    post:
+      description: >-
+        sends siafunds to an address.  The outputs are arbitrarily selected from
+        addresses in the wallet. Any siacoins available in the siafunds being
+        sent (as well as the siacoins  available in any siafunds that end up in
+        a refund address) will become  available to the wallet as siacoins after
+        144 confirmations.  To access all of the siacoins in the siacoin claim
+        balance, send all of  the siafunds to an address in your control (this
+        will give you all the  siacoins, while still letting you control the
+        siafunds).
+      tags:
+        - Wallet
+      parameters:
+        - name: amount
+          description: Number of siafunds being sent.
+          in: query
+          type: integer
+        - name: destination
+          description: Address that is receiving the funds.
+          in: query
+          type: string
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              transactionids:
+                description: >-
+                  Array of IDs of the transactions that were created when
+                  sending the coins. The last transaction contains the output
+                  headed to the 'destination'. Transaction IDs are 64 character
+                  long hex strings.                
+                type: array
+                items:
+                  type: string
+                example:
+                  - >-
+                    1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+                  - >-
+                    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                  - >-
+                    bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/siagkey:
+    post:
+      description: >-
+        Load a key into the wallet that was generated by siag.  Most siafunds
+        are currently in addresses created by siag.
+      tags:
+        - Wallet
+      parameters:
+        - name: encryptionpassword
+          description: >-
+            Key that is used to encrypt the siag key when it is imported to the
+            wallet.
+          in: query
+          type: string
+          required: true
+        - name: keyfiles
+          description: >-
+            List of filepaths that point to the keyfiles that make up the siag
+            key. There should be at least one keyfile per required signature.
+            The filenames need to be commna separated (no spaces), which means
+            filepaths that contain a comma are not allowed.
+          in: query
+          type: string
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/sweep/seed:
+    post:
+      description: >-
+        Scan the blockchain for outputs belonging to a seed and send them to an 
+        address owned by the wallet.
+      tags:
+        - Wallet
+      parameters:
+        - name: dictionary
+          description: >-
+            Name of the dictionary that should be used when decoding the seed.
+            'english' is the most common choice when picking a dictionary.
+          in: query
+          type: string
+        - name: seed
+          description: >-
+            Dictionary-encoded phrase that corresponds to the seed being added
+            to the wallet.
+          in: query
+          type: string
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              coins:
+                description: >-
+                  Number of siacoins, in hastings, transferred to the wallet as
+                  a result of the sweep.
+                type: string
+                example: '123456'
+              funds:
+                description: >-
+                  Number of siafunds transferred to the wallet as a result of
+                  the sweep.
+                type: string
+                example: '1'
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/lock:
+    post:
+      description: >-
+        locks the wallet, wiping all secret keys. After being locked, the keys
+        are encrypted. Queries for the seed, to send siafunds, and related
+        queries become unavailable. Queries concerning transaction history and
+        balance are still available.
+      tags:
+        - Wallet
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  '/wallet/transaction/{id}':
+    get:
+      description: gets the transaction associated with a specific transaction id.
+      tags:
+        - Wallet
+      parameters:
+        - name: id
+          description: ID of the transaction being requested.
+          in: path
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              transaction:
+                $ref: '#/definitions/Transaction'
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/transactions:
+    get:
+      description: returns a list of transactions related to the wallet.
+      tags:
+        - Wallet
+      parameters:
+        - name: startheight
+          description: Height of the block where transaction history should begin.
+          in: query
+          type: string
+        - name: endheight
+          description: >-
+            Height of of the block where the transaction history should end. If
+            'endheight' is greater than the current height, all transactions up
+            to and including the most recent block will be provided.
+          in: query
+          type: string
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              confirmedtransactions:
+                description: >-
+                  All of the confirmed transactions appearing between height
+                  'startheight' and height 'endheight' (inclusive).
+                type: array
+                items:
+                  $ref: '#/definitions/Transaction'
+              unconfirmedtransactions:
+                description: All of the unconfirmed transactions.
+                type: array
+                items:
+                  $ref: '#/definitions/Transaction'
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  '/wallet/transactions/{addr}':
+    get:
+      description: returns all of the transactions related to a specific address.
+      tags:
+        - Wallet
+      parameters:
+        - name: addr
+          description: >-
+            Unlock hash (i.e. wallet address) whose transactions are being
+            requested.
+          in: path
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              transactions:
+                description: >-
+                  Array of processed transactions that relate to the supplied
+                  address.
+                type: array
+                items:
+                  $ref: '#/definitions/Transaction'
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/unlock:
+    post:
+      description: >-
+        unlocks the wallet. The wallet is capable of knowing whether the correct
+        password was provided.
+      tags:
+        - Wallet
+      parameters:
+        - name: encryptionpassword
+          description: >-
+            Password that gets used to decrypt the file. Most frequently, the
+            encryption password is the same as the primary wallet seed.
+          in: query
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  '/wallet/verify/address/{addr}':
+    get:
+      description: >-
+        takes the address specified by addr and returns a JSON response
+        indicating if the address is valid.
+      tags:
+        - Wallet
+      parameters:
+        - name: addr
+          in: path
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              valid:
+                description: >-
+                  valid indicates if the address supplied to addr is a valid
+                  UnlockHash.
+                type: boolean
+                example: true
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /wallet/changepassword:
+    post:
+      description: changes the wallet's encryption password.
+      tags:
+        - Wallet
+      parameters:
+        - name: encryptionpassword
+          description: encryptionpassword is the wallet's current encryption password.
+          in: query
+          type: string
+          required: true
+        - name: newpassword
+          description: newpassword is the new password for the wallet.
+          in: query
+          type: string
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+definitions:
+  Hostdb:
+    properties:
+      hosts:
+        type: array
+        items:
+          type: object
+          properties:
+            acceptingcontracts:
+              type: boolean
+              description: true if the host is accepting new contracts.
+              example: true
+            maxdownloadbatchsize:
+              type: integer
+              format: int64
+              description: >-
+                Maximum number of bytes that the host will allow to be requested
+                by a single download request.
+              example: 17825792
+            maxduration:
+              type: integer
+              format: int64
+              description: >
+                Maximum duration in blocks that a host will allow for a file
+                contract.
+
+                The host commits to keeping files for the full duration under
+                the
+
+                threat of facing a large penalty for losing or dropping data
+                before
+
+                the duration is complete. The storage proof window of an
+                incoming file
+
+                contract must end before the current height + maxduration.
+
+                There is a block approximately every 10 minutes.
+
+                e.g. 1 day = 144 blocks
+              example: 25920
+            maxrevisebatchsize:
+              type: integer
+              description: >
+                Maximum size in bytes of a single batch of file contract
+
+                revisions. Larger batch sizes allow for higher throughput as
+                there is
+
+                significant communication overhead associated with performing a
+                batch
+
+                upload.
+              example: 17825792
+            netaddress:
+              type: string
+              description: >-
+                Remote address of the host. It can be an IPv4, IPv6, or
+                hostname, along with the port. IPv6 addresses are enclosed in
+                square brackets.
+              example: '123.456.789.0:9982'
+            remainingstorage:
+              type: integer
+              format: int64
+              description: 'Unused storage capacity the host claims it has, in bytes.'
+              example: 35000000000
+            sectorsize:
+              type: integer
+              format: int64
+              description: >-
+                Smallest amount of data in bytes that can be uploaded or
+                downloaded to or from the host.
+              example: 4194304
+            totalstorage:
+              type: integer
+              format: int64
+              description: >-
+                Total amount of storage capacity the host claims it has, in
+                bytes.
+              example: 35000000000
+            unlockhash:
+              type: string
+              description: >-
+                Address at which the host can be paid when forming file
+                contracts.
+              example: >-
+                0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab
+            windowsize:
+              type: integer
+              description: >
+                A storage proof window is the number of blocks that the host has
+                to
+
+                get a storage proof onto the blockchain. The window size is the
+
+                minimum size of window that the host will accept in a file
+                contract.
+              example: 144
+            publickey:
+              type: object
+              description: Public key used to identify and verify hosts.
+              properties:
+                algorithm:
+                  type: string
+                  description: >-
+                    Algorithm used for signing and verification. Typically
+                    "ed25519".
+                  example: ed25519
+                key:
+                  type: string
+                  description: Key used to verify signed host messages.
+                  example: RW50cm9weSBpc24ndCB3aGF0IGl0IHVzZWQgdG8gYmU=
+  StandardError:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  TransactionSet:
+    type: array
+    items:
+      type: string
+  Transaction:
+    properties:
+      transaction:
+        description: >-
+          Raw transaction. The rest of the fields in the resposne are determined
+          from this raw transaction. It is left undocumented here as the
+          processed transaction (the rest of the fields in this object) are
+          usually what is desired.
+        type: object
+      transactionid:
+        description: ID of the transaction from which the wallet transaction was derived.
+        type: string
+        example: 1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      confirmationheight:
+        description: >-
+          Block height at which the transaction was confirmed. If the
+          transaction is unconfirmed the height will be the max value of an
+          unsigned 64-bit integer.
+        type: integer
+        format: int64
+        example: 50000
+      confirmationtimestamp:
+        description: >-
+          Time, in unix time, at which a transaction was confirmed. If the
+          transaction is unconfirmed the timestamp will be the max value of an
+          unsigned 64-bit integer.
+        type: integer
+        format: int64
+        example: 1257894000
+      inputs:
+        description: Array of processed inputs detailing the inputs to the transaction.
+        type: array
+        items:
+          type: object
+          properties:
+            parentid:
+              description: The id of the output being spent.
+              type: string
+              example: 1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+            fundtype:
+              description: >-
+                Type of fund represented by the input. Possible values are
+                'siacoin input' and 'siafund input'.
+              type: string
+              example: siacoin input
+            walletaddress:
+              description: true if the address is owned by the wallet.
+              type: boolean
+              example: false
+            relatedaddress:
+              description: >-
+                Address that is affected. For inputs (outgoing money), the
+                related address is usually not important because the wallet
+                arbitrarily selects which addresses will fund a transaction.
+              type: string
+              example: >-
+                1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab
+            value:
+              description: Amount of funds that have been moved in the input.
+              type: string
+              example: '1234'
+      outputs:
+        description: >-
+          Array of processed outputs detailing the outputs of the transaction.
+          Outputs related to file contracts are excluded.
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              description: The id of the output that was created.
+              type: string
+              example: 1234567890abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+            fundtype:
+              description: >-
+                Type of fund is represented by the output. Possible values are
+                'siacoin output', 'siafund output', 'claim output', and 'miner
+                payout'. Siacoin outputs and claim outputs both relate to
+                siacoins. Siafund outputs relate to siafunds. Miner payouts
+                point to siacoins that have been spent on a miner payout.
+                Because the destination of the miner payout is determined by the
+                block and not the transaction, the data 'maturityheight',
+                'walletaddress', and 'relatedaddress' are left
+                blank.                            
+              type: string
+              example: siacoin output
+            maturityheight:
+              description: >-
+                Block height the output becomes available to be spent. Siacoin
+                outputs and siafund outputs mature immediately - their maturity
+                height will always be the confirmation height of the
+                transaction. Claim outputs cannot be spent until they have had
+                144 confirmations, thus the maturity height of a claim output
+                will always be 144 larger than the confirmation height of the
+                transaction.
+              type: integer
+              format: int64
+              example: 50000
+            walletaddress:
+              description: true if the address is owned by the wallet.
+              type: boolean
+              example: false
+            relatedaddress:
+              description: >-
+                Address that is affected. For outputs (incoming money), the
+                related address field can be used to determine who has sent
+                money to the wallet.
+              type: string
+              example: >-
+                aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+            value:
+              description: Amount of funds that have been moved in the output.
+              type: string
+              example: '1234'
+  FileInfo:
+    type: object
+    properties:
+      siapath:
+        type: string
+        description: >-
+          Path to the file in the renter on the network.
+        example: "foo/bar.txt"
+      localpath:
+        type: string
+        description: >-
+          Path to the local file on disk.
+        example: "/home/foo/bar.txt"
+      filesize:
+        type: integer
+        format: int64
+        description: >-
+          Size of the file in bytes.
+        example: 8192
+      available:
+        type: boolean
+        description: >-
+          true if the file is available for download. Files may be available
+          before they are completely uploaded.
+        example: true
+      renewing:
+        type: boolean
+        description: >-
+          true if the file's contracts will be automatically renewed by the
+          renter.
+        example: true
+      redundancy:
+        type: number
+        description: >-
+          Average redundancy of the file on the network. Redundancy is
+          calculated by dividing the amount of data uploaded in the file's open
+          contracts by the size of the file. Redundancy does not necessarily
+          correspond to availability. Specifically, a redundancy >= 1 does not
+          indicate the file is available as there could be a chunk of the file
+          with 0 redundancy.
+        example: 5
+      uploadedbytes:
+        type: integer
+        format: int64
+        description: >-
+          Total number of bytes successfully uploaded via current file contracts.
+          This number includes padding and rendundancy, so a file with a size of
+          8192 bytes might be padded to 40 MiB and, with a redundancy of 5,
+          encoded to 200 MiB for upload.
+        example: 209715200
+      uploadprogress:
+        type: number
+        description: >-
+          Percentage of the file uploaded, including redundancy. Uploading has
+          completed when uploadprogress is 100. Files may be available for
+          download before upload progress is 100.
+        example: 100
+      expiration:
+        type: integer
+        format: int64
+        description: >-
+          Block height at which the file ceases availability.
+        example: 60000
+swagger: '2.0'
+info:
+  version: 1.3.3
+  title: Sia
+schemes:
+  - http
+host: 'localhost:9980'
+produces:
+  - application/json
+tags:
+  - name: Daemon
+    description: >
+      The daemon is responsible for starting and stopping the modules which make
+      up the rest of Sia. It also provides endpoints for viewing build
+      constants.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Daemon.md'
+  - name: Consensus
+    description: >
+      The consensus set manages everything related to consensus and keeps the
+      blockchain in sync with the rest of the network. The consensus set's API
+      endpoint returns information about the state of the blockchain.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Consensus.md'
+  - name: Gateway
+    description: >
+      The gateway maintains a peer to peer connection to the network and
+      provides a method for calling RPCs on connected peers. The gateway's API
+      endpoints expose methods for viewing the connected peers, manually
+      connecting to peers, and manually disconnecting from peers. The gateway
+      may connect or disconnect from peers on its own.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Gateway.md'
+  - name: Host
+    description: >
+      The host provides storage from local disks to the network. The host
+      negotiates file contracts with remote renters to earn money for storing
+      other users' files. The host's endpoints expose methods for viewing and
+      modifying host settings, announcing to the network, and managing how files
+      are stored on disk.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Host.md'
+  - name: HostDB
+    description: >
+      The hostdb maintains a database of all hosts known to the network. The
+      database identifies hosts by their public key and keeps track of metrics
+      such as price.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/HostDB.md'
+  - name: Miner
+    description: >
+      The miner provides endpoints for getting headers for work and submitting
+      solved headers to the network. The miner also provides endpoints for
+      controlling a basic CPU mining implementation.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Miner.md'
+  - name: Renter
+    description: >-
+      The renter manages the user's files on the network. The renter's API
+      endpoints expose methods for managing files on the network and managing
+      the renter's allocated funds.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/master/doc/api/Renter.md'
+  - name: Wallet
+    description: >-
+      The wallet stores and manages siacoins and siafunds. The wallet's API
+      endpoints expose methods for creating and loading wallets, locking and
+      unlocking, sending siacoins and siafunds, and getting the wallet's
+      balance.
+
+      You must create a wallet before you can use the wallet's API endpoints.
+      You can create a wallet with the /wallet/init endpoint. Wallets are always
+      encrypted on disk. Calls to some wallet API endpoints will fail until the 
+      wallet is unlocked. The wallet can be unlocked with the /wallet/unlock
+      endpoint. Once the wallet is unlocked calls to the API endpoints will
+      succeed until the wallet is locked again with /wallet/lock, or Siad is
+      restarted.  The host and renter require the miner to be unlocked.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/master/doc/api/Wallet.md'
