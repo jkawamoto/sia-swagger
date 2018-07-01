@@ -833,7 +833,7 @@ paths:
         Remove a storage folder from the manager. All storage on the folder will
         be moved to other storage folders, meaning that no data will be lost. If
         the manager is unable to save data, an error will be returned and the
-        operation will be stopped. 
+        operation will be stopped.
       tags:
         - Host
       parameters:
@@ -900,10 +900,10 @@ paths:
     post:
       description: >
         deletes a sector, meaning that the manager will be unable to upload that
-        sector and be unable to provide a storage proof on that sector. 
+        sector and be unable to provide a storage proof on that sector.
 
         This endpoint is for removing the data entirely, and will remove
-        instances of the sector appearing at all heights. 
+        instances of the sector appearing at all heights.
 
         The primary purpose is to comply with legal requests to remove data.
       tags:
@@ -1651,16 +1651,16 @@ paths:
                     type: integer
                     format: int64
                     description: >-
-                      bytes per second. 
-                      MaxUploadSpeed by defaul is unlimited but can be set by the user to 
+                      bytes per second.
+                      MaxUploadSpeed by defaul is unlimited but can be set by the user to
                       manage bandwidth
                     example: 1234
                   maxdownloadspeed:
                     type: integer
                     format: int64
                     description: >-
-                      bytes per second.                    
-                      MaxDownloadSpeed by defaul is unlimited but can be set by the user to 
+                      bytes per second.
+                      MaxDownloadSpeed by defaul is unlimited but can be set by the user to
                       manage bandwidth
                     example: 1234
                   streamcachesize:
@@ -1684,7 +1684,7 @@ paths:
                     example: "1234"
                   totalallocated:
                     type: string
-                    description: >- 
+                    description: >-
                       Total amount of money that the renter has put into contracts. Includes
                       spent money and also money that will be returned to the renter.
                       In hastings.
@@ -1713,9 +1713,10 @@ paths:
                     description: Amount of money in the allowance that has not been spent.
                     example: '1234'
               currentperiod:
-                type: string
+                type: integer
+                format: int64
                 description: Height at which the current allowance period began.
-                example: '200'
+                example: 200
         default:
           description: Error Response
           schema:
@@ -1760,13 +1761,13 @@ paths:
         - name: maxuploadspeed
           description: >-
             Max upload speed permitted, speed provide in bytes per second
-          in: query 
+          in: query
           type: integer
           format: int64
         - name: streamcachesize
-          description: >- 
-            Stream cache size specifies how many data chunks will be cached while 
-            streaming.  
+          description: >-
+            Stream cache size specifies how many data chunks will be cached while
+            streaming.
           in: query
           type: integer
           format: int64
@@ -1902,7 +1903,7 @@ paths:
                       description: Local path that the file will be downloaded to.
                       example: /home/users/alice
                     destinationtype:
-                      type: string 
+                      type: string
                       description: >-
                         What type of destination was used. Can be "file", indicating a download
                         to disk, can be "buffer", indicating a download to memory, and can be
@@ -1921,8 +1922,8 @@ paths:
                       type: integer
                       format: int64
                       description: >-
-                        Offset within the file of the download. For full file downloads, the 
-                        offset will be '0'. For partial downloads, the offset may be anywhere 
+                        Offset within the file of the download. For full file downloads, the
+                        offset will be '0'. For partial downloads, the offset may be anywhere
                         within the file. offset+length will never exceed the full file size.
                       example: 0
                     siapath:
@@ -1952,7 +1953,7 @@ paths:
                       example: ""
                     received:
                       type: integer
-                      format: int64                    
+                      format: int64
                       description: >-
                         Number of bytes downloaded thus far. Will only be updated as segments
                         of the file complete fully. This typically has a resolution of tens of
@@ -2031,14 +2032,14 @@ paths:
               downloadterabyte:
                 description: >-
                   The estimated cost of downloading one terabyte of data from
-                  the network.                  
+                  the network.
                 type: string
                 example: '1234'
               formcontracts:
                 description: >-
                   The estimated cost of forming a set of contracts on the
                   network. This cost also applies to the estimated cost of
-                  renewing the renter's set of contracts.                
+                  renewing the renter's set of contracts.
                 type: string
                 example: '1234'
               storageterabytemonth:
@@ -2098,7 +2099,7 @@ paths:
         - name: destination
           type: string
           in: query
-          description: >- 
+          description: >-
             Location on disk that the file will be downloaded to.
           required: true
         - name: httpresp
@@ -2109,7 +2110,7 @@ paths:
         - name: length
           type: integer
           format: int64
-          in: query 
+          in: query
           description: >-
             Length of the requested data. Has to be <= filesize-offset.
         - name: offset
@@ -2187,7 +2188,7 @@ paths:
         This might lead to a substantial increase in ram usage and therefore
         it is not recommended to stream multiple files in parallel at the moment.
         This restriction will be removed together with the caching
-        once partial downloads are supported in the future.      
+        once partial downloads are supported in the future.
       tags:
         - Renter
       parameters:
@@ -2212,7 +2213,7 @@ paths:
         - name: siapath
           type: string
           in: path
-          description: >- 
+          description: >-
             Location where the file will reside in the renter on the network. The path
             must be non-empty, may not include any path traversal strings ("./", "../"),
             and may not begin with a forward-slash character.
@@ -2295,7 +2296,7 @@ paths:
                   These coins are counted as outgoing, and the refund is counted
                   as incoming. The difference in balance can be calculated using
                   'unconfirmedincomingsiacoins' -
-                  'unconfirmedoutgoingsiacoins'  
+                  'unconfirmedoutgoingsiacoins'
                 type: string
                 example: '0'
               unconfirmedincomingsiacoins:
@@ -2372,7 +2373,7 @@ paths:
             properties:
               address:
                 description: >-
-                  Wallet address that can receive siacoins or siafunds. 
+                  Wallet address that can receive siacoins or siafunds.
                   Addresses are 76 character long hex strings.
                 type: string
                 example: >-
@@ -2386,7 +2387,7 @@ paths:
       description: >-
         fetches the list of addresses from the wallet.  If the wallet has not
         been created or unlocked, no addresses will be returned. After the
-        wallet is unlocked, this call will continue to return its addresses 
+        wallet is unlocked, this call will continue to return its addresses
         even after the wallet is locked again.
       tags:
         - Wallet
@@ -2554,7 +2555,7 @@ paths:
           description: >-
             Name of the dictionary that should be used when encoding the seed.
             'english' is the most common choice when picking a
-            dictionary.          
+            dictionary.
           in: query
           type: string
         - name: seed
@@ -2583,7 +2584,7 @@ paths:
         underlying seed is the same no matter what dictionary is used for the
         encoding. The encoding also contains a small checksum of the seed,  to
         help catch simple mistakes when copying. The library entropy-mnemonics
-        is used when encoding.      
+        is used when encoding.
       tags:
         - Wallet
       parameters:
@@ -2675,7 +2676,7 @@ paths:
                   Array of IDs of the transactions that were created when
                   sending the coins. The last transaction contains the output
                   headed to the 'destination'. Transaction IDs are 64 character
-                  long hex strings.                
+                  long hex strings.
                 type: array
                 items:
                   type: string
@@ -2722,7 +2723,7 @@ paths:
                   Array of IDs of the transactions that were created when
                   sending the coins. The last transaction contains the output
                   headed to the 'destination'. Transaction IDs are 64 character
-                  long hex strings.                
+                  long hex strings.
                 type: array
                 items:
                   type: string
@@ -2771,7 +2772,7 @@ paths:
   /wallet/sweep/seed:
     post:
       description: >-
-        Scan the blockchain for outputs belonging to a seed and send them to an 
+        Scan the blockchain for outputs belonging to a seed and send them to an
         address owned by the wallet.
       tags:
         - Wallet
@@ -3190,7 +3191,7 @@ definitions:
                 Because the destination of the miner payout is determined by the
                 block and not the transaction, the data 'maturityheight',
                 'walletaddress', and 'relatedaddress' are left
-                blank.                            
+                blank.
               type: string
               example: siacoin output
             maturityheight:
@@ -3363,7 +3364,7 @@ tags:
 
       You must create a wallet before you can use the wallet's API endpoints.
       You can create a wallet with the /wallet/init endpoint. Wallets are always
-      encrypted on disk. Calls to some wallet API endpoints will fail until the 
+      encrypted on disk. Calls to some wallet API endpoints will fail until the
       wallet is unlocked. The wallet can be unlocked with the /wallet/unlock
       endpoint. Once the wallet is unlocked calls to the API endpoints will
       succeed until the wallet is locked again with /wallet/lock, or Siad is

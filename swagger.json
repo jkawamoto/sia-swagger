@@ -308,8 +308,7 @@
         "tags": [
           "Host"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "acceptingcontracts",
             "description": "When set to true, the host will accept new file contracts if the\nterms are reasonable. When set to false, the host will not accept new\nfile contracts at all.\n",
             "in": "query",
@@ -420,15 +419,13 @@
         "tags": [
           "Host"
         ],
-        "parameters": [
-          {
-            "name": "netaddress",
-            "type": "string",
-            "description": "The address to be announced. If no address is provided, the automatically discovered address will be used instead.",
-            "required": false,
-            "in": "query"
-          }
-        ],
+        "parameters": [{
+          "name": "netaddress",
+          "type": "string",
+          "description": "The address to be announced. If no address is provided, the automatically discovered address will be used instead.",
+          "required": false,
+          "in": "query"
+        }],
         "responses": {
           "204": {
             "description": "Successful Response"
@@ -512,8 +509,7 @@
         "tags": [
           "Host"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "path",
             "type": "string",
             "description": "Local path on disk to the storage folder to add.",
@@ -547,8 +543,7 @@
         "tags": [
           "Host"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "path",
             "type": "string",
             "in": "query",
@@ -582,8 +577,7 @@
         "tags": [
           "Host"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "path",
             "type": "string",
             "in": "query",
@@ -617,15 +611,13 @@
         "tags": [
           "Host"
         ],
-        "parameters": [
-          {
-            "name": "merkleroot",
-            "type": "string",
-            "in": "path",
-            "required": true,
-            "description": "Merkleroot of the sector to delete."
-          }
-        ],
+        "parameters": [{
+          "name": "merkleroot",
+          "type": "string",
+          "in": "path",
+          "required": true,
+          "description": "Merkleroot of the sector to delete."
+        }],
         "responses": {
           "204": {
             "description": "Successful Response"
@@ -645,15 +637,13 @@
         "tags": [
           "HostDB"
         ],
-        "parameters": [
-          {
-            "name": "numhosts",
-            "type": "integer",
-            "description": "Number of hosts to return. The actual number of hosts returned may be less if there are insufficient active hosts. Optional, the default is all active hosts.",
-            "in": "query",
-            "required": false
-          }
-        ],
+        "parameters": [{
+          "name": "numhosts",
+          "type": "integer",
+          "description": "Number of hosts to return. The actual number of hosts returned may be less if there are insufficient active hosts. Optional, the default is all active hosts.",
+          "in": "query",
+          "required": false
+        }],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -698,15 +688,13 @@
         "tags": [
           "HostDB"
         ],
-        "parameters": [
-          {
-            "name": "pubkey",
-            "in": "path",
-            "description": "The public key of the host. Each public key identifies a single host.",
-            "type": "string",
-            "required": true
-          }
-        ],
+        "parameters": [{
+          "name": "pubkey",
+          "in": "path",
+          "description": "The public key of the host. Each public key identifies a single host.",
+          "type": "string",
+          "required": true
+        }],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -1169,15 +1157,13 @@
           "Consensus"
         ],
         "description": "validates a set of transactions using the current utxo set.",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "body",
-            "schema": {
-              "$ref": "#/definitions/TransactionSet"
-            }
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "schema": {
+            "$ref": "#/definitions/TransactionSet"
           }
-        ],
+        }],
         "responses": {
           "204": {
             "description": "Successful Response"
@@ -1245,15 +1231,13 @@
         "tags": [
           "Gateway"
         ],
-        "parameters": [
-          {
-            "name": "netaddress",
-            "description": "address of the peer to connect to. It should be a\nreachable ip address and port number, of the form IP:port. IPV6 addresses\nmust be enclosed in square brackets.\n",
-            "in": "path",
-            "type": "string",
-            "required": true
-          }
-        ],
+        "parameters": [{
+          "name": "netaddress",
+          "description": "address of the peer to connect to. It should be a\nreachable ip address and port number, of the form IP:port. IPV6 addresses\nmust be enclosed in square brackets.\n",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }],
         "responses": {
           "204": {
             "description": "Successful Response"
@@ -1273,15 +1257,13 @@
         "tags": [
           "Gateway"
         ],
-        "parameters": [
-          {
-            "name": "netaddress",
-            "description": "address of the peer to connect to. It should be a reachable ip address and port number, of the form IP:port. IPV6 addresses must be enclosed in square brackets.\n",
-            "in": "path",
-            "type": "string",
-            "required": true
-          }
-        ],
+        "parameters": [{
+          "name": "netaddress",
+          "description": "address of the peer to connect to. It should be a reachable ip address and port number, of the form IP:port. IPV6 addresses must be enclosed in square brackets.\n",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }],
         "responses": {
           "204": {
             "description": "Successful Response"
@@ -1401,9 +1383,10 @@
                   }
                 },
                 "currentperiod": {
-                  "type": "string",
+                  "type": "integer",
+                  "format": "int64",
                   "description": "Height at which the current allowance period began.",
-                  "example": "200"
+                  "example": 200
                 }
               }
             }
@@ -1421,8 +1404,7 @@
         "tags": [
           "Renter"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "funds",
             "description": "Number of hastings allocated for file contracts in the given period.",
             "in": "query",
@@ -1725,15 +1707,13 @@
         "tags": [
           "Renter"
         ],
-        "parameters": [
-          {
-            "name": "siapath",
-            "description": "Location of the file in the renter on the network.",
-            "in": "path",
-            "type": "string",
-            "required": true
-          }
-        ],
+        "parameters": [{
+          "name": "siapath",
+          "description": "Location of the file in the renter on the network.",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -1803,15 +1783,13 @@
         "tags": [
           "Renter"
         ],
-        "parameters": [
-          {
-            "name": "siapath",
-            "description": "Location of the file in the renter on the network.",
-            "in": "path",
-            "type": "string",
-            "required": true
-          }
-        ],
+        "parameters": [{
+          "name": "siapath",
+          "description": "Location of the file in the renter on the network.",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }],
         "responses": {
           "204": {
             "description": "Successful Response"
@@ -1831,8 +1809,7 @@
         "tags": [
           "Renter"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "siapath",
             "description": "Location of the file in the renter on the network.",
             "in": "path",
@@ -1892,8 +1869,7 @@
         "tags": [
           "Renter"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "siapath",
             "description": "Location of the file in the renter on the network.",
             "in": "path",
@@ -1927,8 +1903,7 @@
         "tags": [
           "Renter"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "siapath",
             "description": "Location of the file in the renter on the network.",
             "in": "path",
@@ -1962,14 +1937,12 @@
         "tags": [
           "Renter"
         ],
-        "parameters": [
-          {
-            "name": "siapath",
-            "type": "string",
-            "in": "path",
-            "required": true
-          }
-        ],
+        "parameters": [{
+          "name": "siapath",
+          "type": "string",
+          "in": "path",
+          "required": true
+        }],
         "responses": {
           "200": {
             "description": "Successful Response"
@@ -1989,8 +1962,7 @@
         "tags": [
           "Renter"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "siapath",
             "type": "string",
             "in": "path",
@@ -2106,8 +2078,7 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "source",
             "description": "Path on disk to the v0.3.3.x wallet to be loaded.",
             "in": "query",
@@ -2204,14 +2175,12 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
-            "name": "destination",
-            "description": "path to the location on disk where the backup file will be saved.",
-            "in": "query",
-            "type": "string"
-          }
-        ],
+        "parameters": [{
+          "name": "destination",
+          "description": "path to the location on disk where the backup file will be saved.",
+          "in": "query",
+          "type": "string"
+        }],
         "responses": {
           "204": {
             "description": "Successful Response"
@@ -2231,8 +2200,7 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "encryptionpassword",
             "description": "Password that will be used to encrypt the wallet. All subsequent calls should use this password. If left blank, the seed that gets returned will also be the encryption password.",
             "in": "query",
@@ -2279,8 +2247,7 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "encryptionpassword",
             "description": "Password that will be used to encrypt the wallet. All subsequent calls should use this password. If left blank, the seed that gets returned will also be the encryption password.",
             "in": "query",
@@ -2327,8 +2294,7 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "encryptionpassword",
             "description": "Key used to encrypt the new seed when it is saved to disk.",
             "in": "query",
@@ -2367,14 +2333,12 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
-            "name": "dictionary",
-            "description": "Name of the dictionary that should be used when encoding the seed. 'english' is the most common choice when picking a dictionary.",
-            "in": "query",
-            "type": "string"
-          }
-        ],
+        "parameters": [{
+          "name": "dictionary",
+          "description": "Name of the dictionary that should be used when encoding the seed. 'english' is the most common choice when picking a dictionary.",
+          "in": "query",
+          "type": "string"
+        }],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -2420,8 +2384,7 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "amount",
             "description": "Number of hastings being sent. A hasting is the smallest unit in Sia. There are 10^24 hastings in a siacoin.",
             "in": "query",
@@ -2475,8 +2438,7 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "amount",
             "description": "Number of siafunds being sent.",
             "in": "query",
@@ -2524,8 +2486,7 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "encryptionpassword",
             "description": "Key that is used to encrypt the siag key when it is imported to the wallet.",
             "in": "query",
@@ -2559,8 +2520,7 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "dictionary",
             "description": "Name of the dictionary that should be used when decoding the seed. 'english' is the most common choice when picking a dictionary.",
             "in": "query",
@@ -2625,15 +2585,13 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
-            "name": "id",
-            "description": "ID of the transaction being requested.",
-            "in": "path",
-            "type": "string",
-            "required": true
-          }
-        ],
+        "parameters": [{
+          "name": "id",
+          "description": "ID of the transaction being requested.",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -2660,8 +2618,7 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "startheight",
             "description": "Height of the block where transaction history should begin.",
             "in": "query",
@@ -2711,15 +2668,13 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
-            "name": "addr",
-            "description": "Unlock hash (i.e. wallet address) whose transactions are being requested.",
-            "in": "path",
-            "type": "string",
-            "required": true
-          }
-        ],
+        "parameters": [{
+          "name": "addr",
+          "description": "Unlock hash (i.e. wallet address) whose transactions are being requested.",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -2750,14 +2705,12 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
-            "name": "encryptionpassword",
-            "description": "Password that gets used to decrypt the file. Most frequently, the encryption password is the same as the primary wallet seed.",
-            "in": "query",
-            "type": "string"
-          }
-        ],
+        "parameters": [{
+          "name": "encryptionpassword",
+          "description": "Password that gets used to decrypt the file. Most frequently, the encryption password is the same as the primary wallet seed.",
+          "in": "query",
+          "type": "string"
+        }],
         "responses": {
           "204": {
             "description": "Successful Response"
@@ -2777,14 +2730,12 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
-            "name": "addr",
-            "in": "path",
-            "type": "string",
-            "required": true
-          }
-        ],
+        "parameters": [{
+          "name": "addr",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -2813,8 +2764,7 @@
         "tags": [
           "Wallet"
         ],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "encryptionpassword",
             "description": "encryptionpassword is the wallet's current encryption password.",
             "in": "query",
@@ -3108,8 +3058,7 @@
   "produces": [
     "application/json"
   ],
-  "tags": [
-    {
+  "tags": [{
       "name": "Daemon",
       "description": "The daemon is responsible for starting and stopping the modules which make up the rest of Sia. It also provides endpoints for viewing build constants.\n",
       "externalDocs": {
