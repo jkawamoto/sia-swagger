@@ -1,3 +1,95 @@
+swagger: '2.0'
+info:
+  version: 1.3.7
+  title: Sia
+schemes:
+  - http
+host: 'localhost:9980'
+produces:
+  - application/json
+securityDefinitions:
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
+tags:
+  - name: Daemon
+    description: >
+      The daemon is responsible for starting and stopping the modules which make
+      up the rest of Sia. It also provides endpoints for viewing build
+      constants.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Daemon.md'
+  - name: Consensus
+    description: >
+      The consensus set manages everything related to consensus and keeps the
+      blockchain in sync with the rest of the network. The consensus set's API
+      endpoint returns information about the state of the blockchain.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Consensus.md'
+  - name: Gateway
+    description: >
+      The gateway maintains a peer to peer connection to the network and
+      provides a method for calling RPCs on connected peers. The gateway's API
+      endpoints expose methods for viewing the connected peers, manually
+      connecting to peers, and manually disconnecting from peers. The gateway
+      may connect or disconnect from peers on its own.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Gateway.md'
+  - name: Host
+    description: >
+      The host provides storage from local disks to the network. The host
+      negotiates file contracts with remote renters to earn money for storing
+      other users' files. The host's endpoints expose methods for viewing and
+      modifying host settings, announcing to the network, and managing how files
+      are stored on disk.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Host.md'
+  - name: HostDB
+    description: >
+      The hostdb maintains a database of all hosts known to the network. The
+      database identifies hosts by their public key and keeps track of metrics
+      such as price.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/HostDB.md'
+  - name: Miner
+    description: >
+      The miner provides endpoints for getting headers for work and submitting
+      solved headers to the network. The miner also provides endpoints for
+      controlling a basic CPU mining implementation.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Miner.md'
+  - name: Renter
+    description: >-
+      The renter manages the user's files on the network. The renter's API
+      endpoints expose methods for managing files on the network and managing
+      the renter's allocated funds.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/master/doc/api/Renter.md'
+  - name: Wallet
+    description: >-
+      The wallet stores and manages siacoins and siafunds. The wallet's API
+      endpoints expose methods for creating and loading wallets, locking and
+      unlocking, sending siacoins and siafunds, and getting the wallet's
+      balance.
+
+      You must create a wallet before you can use the wallet's API endpoints.
+      You can create a wallet with the /wallet/init endpoint. Wallets are always
+      encrypted on disk. Calls to some wallet API endpoints will fail until the
+      wallet is unlocked. The wallet can be unlocked with the /wallet/unlock
+      endpoint. Once the wallet is unlocked calls to the API endpoints will
+      succeed until the wallet is locked again with /wallet/lock, or Siad is
+      restarted.  The host and renter require the miner to be unlocked.
+    externalDocs:
+      description: GitHub
+      url: 'https://github.com/NebulousLabs/Sia/blob/master/doc/api/Wallet.md'
 paths:
   /host:
     get:
@@ -3285,90 +3377,3 @@ definitions:
         description: >-
           Block height at which the file ceases availability.
         example: 60000
-swagger: '2.0'
-info:
-  version: 1.3.3
-  title: Sia
-schemes:
-  - http
-host: 'localhost:9980'
-produces:
-  - application/json
-tags:
-  - name: Daemon
-    description: >
-      The daemon is responsible for starting and stopping the modules which make
-      up the rest of Sia. It also provides endpoints for viewing build
-      constants.
-    externalDocs:
-      description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Daemon.md'
-  - name: Consensus
-    description: >
-      The consensus set manages everything related to consensus and keeps the
-      blockchain in sync with the rest of the network. The consensus set's API
-      endpoint returns information about the state of the blockchain.
-    externalDocs:
-      description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Consensus.md'
-  - name: Gateway
-    description: >
-      The gateway maintains a peer to peer connection to the network and
-      provides a method for calling RPCs on connected peers. The gateway's API
-      endpoints expose methods for viewing the connected peers, manually
-      connecting to peers, and manually disconnecting from peers. The gateway
-      may connect or disconnect from peers on its own.
-    externalDocs:
-      description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Gateway.md'
-  - name: Host
-    description: >
-      The host provides storage from local disks to the network. The host
-      negotiates file contracts with remote renters to earn money for storing
-      other users' files. The host's endpoints expose methods for viewing and
-      modifying host settings, announcing to the network, and managing how files
-      are stored on disk.
-    externalDocs:
-      description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Host.md'
-  - name: HostDB
-    description: >
-      The hostdb maintains a database of all hosts known to the network. The
-      database identifies hosts by their public key and keeps track of metrics
-      such as price.
-    externalDocs:
-      description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/HostDB.md'
-  - name: Miner
-    description: >
-      The miner provides endpoints for getting headers for work and submitting
-      solved headers to the network. The miner also provides endpoints for
-      controlling a basic CPU mining implementation.
-    externalDocs:
-      description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Miner.md'
-  - name: Renter
-    description: >-
-      The renter manages the user's files on the network. The renter's API
-      endpoints expose methods for managing files on the network and managing
-      the renter's allocated funds.
-    externalDocs:
-      description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/master/doc/api/Renter.md'
-  - name: Wallet
-    description: >-
-      The wallet stores and manages siacoins and siafunds. The wallet's API
-      endpoints expose methods for creating and loading wallets, locking and
-      unlocking, sending siacoins and siafunds, and getting the wallet's
-      balance.
-
-      You must create a wallet before you can use the wallet's API endpoints.
-      You can create a wallet with the /wallet/init endpoint. Wallets are always
-      encrypted on disk. Calls to some wallet API endpoints will fail until the
-      wallet is unlocked. The wallet can be unlocked with the /wallet/unlock
-      endpoint. Once the wallet is unlocked calls to the API endpoints will
-      succeed until the wallet is locked again with /wallet/lock, or Siad is
-      restarted.  The host and renter require the miner to be unlocked.
-    externalDocs:
-      description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/master/doc/api/Wallet.md'
