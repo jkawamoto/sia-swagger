@@ -20,7 +20,7 @@ tags:
       constants.
     externalDocs:
       description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Daemon.md'
+      url: 'https://sia.tech/docs/#daemon'
   - name: Consensus
     description: >
       The consensus set manages everything related to consensus and keeps the
@@ -28,7 +28,7 @@ tags:
       endpoint returns information about the state of the blockchain.
     externalDocs:
       description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Consensus.md'
+      url: 'https://sia.tech/docs/#consensus'
   - name: Gateway
     description: >
       The gateway maintains a peer to peer connection to the network and
@@ -38,7 +38,7 @@ tags:
       may connect or disconnect from peers on its own.
     externalDocs:
       description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Gateway.md'
+      url: 'https://sia.tech/docs/#gateway'
   - name: Host
     description: >
       The host provides storage from local disks to the network. The host
@@ -48,7 +48,7 @@ tags:
       are stored on disk.
     externalDocs:
       description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Host.md'
+      url: 'https://sia.tech/docs/#host'
   - name: HostDB
     description: >
       The hostdb maintains a database of all hosts known to the network. The
@@ -56,7 +56,7 @@ tags:
       such as price.
     externalDocs:
       description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/HostDB.md'
+      url: 'https://sia.tech/docs/#host-db'
   - name: Miner
     description: >
       The miner provides endpoints for getting headers for work and submitting
@@ -64,7 +64,7 @@ tags:
       controlling a basic CPU mining implementation.
     externalDocs:
       description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/v1.2.2/doc/api/Miner.md'
+      url: 'https://sia.tech/docs/#miner'
   - name: Renter
     description: >-
       The renter manages the user's files on the network. The renter's API
@@ -72,7 +72,7 @@ tags:
       the renter's allocated funds.
     externalDocs:
       description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/master/doc/api/Renter.md'
+      url: 'https://sia.tech/docs/#renter'
   - name: Wallet
     description: >-
       The wallet stores and manages siacoins and siafunds. The wallet's API
@@ -89,7 +89,7 @@ tags:
       restarted.  The host and renter require the miner to be unlocked.
     externalDocs:
       description: GitHub
-      url: 'https://github.com/NebulousLabs/Sia/blob/master/doc/api/Wallet.md'
+      url: 'https://sia.tech/docs/#wallet'
 paths:
   /host:
     get:
@@ -3385,4 +3385,3 @@ definitions:
         type: boolean
         description: indicates if the siafile is recoverable
         example: true
-        
