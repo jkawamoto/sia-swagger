@@ -3377,3 +3377,12 @@ definitions:
         description: >-
           Block height at which the file ceases availability.
         example: 60000
+      ondisk:
+        type: boolean
+        description: indicates if the source file is found on disk
+        example: true
+      recoverable:
+        type: boolean
+        description: indicates if the siafile is recoverable
+        example: true
+        
