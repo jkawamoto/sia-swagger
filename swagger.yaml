@@ -3315,33 +3315,68 @@ definitions:
   FileInfo:
     type: object
     properties:
-      siapath:
+      accesstime:
         type: string
-        description: >-
-          Path to the file in the renter on the network.
-        example: "foo/bar.txt"
-      localpath:
-        type: string
-        description: >-
-          Path to the local file on disk.
-        example: "/home/foo/bar.txt"
-      filesize:
-        type: integer
-        format: int64
-        description: >-
-          Size of the file in bytes.
-        example: 8192
+        format: date-time
+        example: 2019-03-09T00:53:31.122129328Z
       available:
         type: boolean
         description: >-
           true if the file is available for download. Files may be available
           before they are completely uploaded.
         example: true
-      renewing:
-        type: boolean
+      changetime:
+        type: string
+        format: date-time
+        example: 2019-03-09T00:53:31.122129328Z
+      ciphertype:
+        type: string
+        example: threefish512
+      createtime:
+        type: string
+        format: date-time
+        example: 2019-03-08T13:18:49.47866608Z
+      expiration:
+        type: integer
+        format: int64
         description: >-
-          true if the file's contracts will be automatically renewed by the
-          renter.
+          Block height at which the file ceases availability.
+        example: 60000
+      filesize:
+        type: integer
+        format: int64
+        description: >-
+          Size of the file in bytes.
+        example: 8192
+      health:
+        type: number
+        example: 0.19
+      localpath:
+        type: string
+        description: >-
+          Path to the local file on disk.
+        example: "/home/foo/bar.txt"
+      maxhealth:
+        type: number
+        example: 0.25
+      maxhealthpercent:
+        type: number
+        example: 83.3334
+      modtime:
+        type: string
+        format: date-time
+        example: 2019-03-09T00:53:31.122129328Z
+      numstuckchunks:
+        type: integer
+        format: int64
+        example: 2
+      ondisk:
+        type: boolean
+        description: indicates if the source file is found on disk
+        example: true
+      recoverable:
+        type: boolean
+        description: indicates if the siafile is recoverable
         example: true
       redundancy:
         type: number
@@ -3353,6 +3388,23 @@ definitions:
           indicate the file is available as there could be a chunk of the file
           with 0 redundancy.
         example: 5
+      renewing:
+        type: boolean
+        description: >-
+          true if the file's contracts will be automatically renewed by the
+          renter.
+        example: true
+      siapath:
+        type: string
+        description: >-
+          Path to the file in the renter on the network.
+        example: "foo/bar.txt"
+      stuck:
+        type: boolean
+        example: true
+      stuckhealth:
+        type: number
+        example: 0.25
       uploadedbytes:
         type: integer
         format: int64
@@ -3369,17 +3421,3 @@ definitions:
           completed when uploadprogress is 100. Files may be available for
           download before upload progress is 100.
         example: 100
-      expiration:
-        type: integer
-        format: int64
-        description: >-
-          Block height at which the file ceases availability.
-        example: 60000
-      ondisk:
-        type: boolean
-        description: indicates if the source file is found on disk
-        example: true
-      recoverable:
-        type: boolean
-        description: indicates if the siafile is recoverable
-        example: true
