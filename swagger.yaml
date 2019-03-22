@@ -3318,6 +3318,8 @@ definitions:
       accesstime:
         type: string
         format: date-time
+        description: >-
+          indicates the last time the siafile was accessed
         example: 2019-03-09T00:53:31.122129328Z
       available:
         type: boolean
@@ -3328,13 +3330,19 @@ definitions:
       changetime:
         type: string
         format: date-time
+        description: >-
+          indicates the last time the siafile metadata was updated
         example: 2019-03-09T00:53:31.122129328Z
       ciphertype:
         type: string
+        description: >-
+          indicates the encryption used for the siafile
         example: threefish512
       createtime:
         type: string
         format: date-time
+        description: >-
+          indicates when the siafile was created
         example: 2019-03-08T13:18:49.47866608Z
       expiration:
         type: integer
@@ -3350,6 +3358,10 @@ definitions:
         example: 8192
       health:
         type: number
+        description: >-
+          health is an indication of the amount of redundancy missing
+          where 0 is full redundancy and >1 means the file is not available.
+          The health of the siafile is the health of the worst unstuck chunk.
         example: 0.19
       localpath:
         type: string
@@ -3358,17 +3370,28 @@ definitions:
         example: "/home/foo/bar.txt"
       maxhealth:
         type: number
+        description: >-
+           the maxhealth is either the health or the stuckhealth of the siafile,
+           whichever is worst
         example: 0.25
       maxhealthpercent:
         type: number
+        description: >-
+          maxhealthpercent is the maxhealth converted to be out of 100%
+          to be more easily understood
         example: 83.3334
       modtime:
         type: string
         format: date-time
+        description: >-
+          indicates the last time the siafile contents where modified
         example: 2019-03-09T00:53:31.122129328Z
       numstuckchunks:
         type: integer
         format: int64
+        description: >-
+          indicates the number of stuck chunks in a file.
+          A chunk is stuck if it cannot reach full redundancy
         example: 2
       ondisk:
         type: boolean
@@ -3401,9 +3424,14 @@ definitions:
         example: "foo/bar.txt"
       stuck:
         type: boolean
+        description: >-
+          a file is stuck if there are any stuck chunks in the file,
+          which means the file cannot reach full redundancy
         example: true
       stuckhealth:
         type: number
+        description: >-
+          stuckhealth is the worst health of any of the stuck chunks.
         example: 0.25
       uploadedbytes:
         type: integer
