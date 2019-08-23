@@ -2194,6 +2194,36 @@ paths:
           description: Error Response
           schema:
             $ref: '#/definitions/StandardError'
+  /renter/downloads/clear:
+    post:
+      description: >-
+        Clears the download history of the renter for a range of unix time stamps.
+        Both parameters are optional, if no parameters are provided,
+        the entire download history will be cleared. To clear a single download,
+        provide the timestamp for the download as both parameters.
+        Providing only the before parameter will clear all downloads older than
+        the timestamp. Conversely, providing only the after parameter will clear
+        all downloads newer than the timestamp.
+      tags:
+        - Renter
+      parameters:
+        - name: before
+          description: unix timestamp found in the download history
+          in: query
+          type: integer
+          format: int64
+        - name: after
+          description: unix timestamp found in the download history
+          in: query
+          type: integer
+          format: int64
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
   /renter/files:
     get:
       description: lists the status of all files.
