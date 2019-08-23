@@ -2484,7 +2484,6 @@ paths:
           description: Error Response
           schema:
             $ref: '#/definitions/StandardError'
-
   '/renter/upload/{siapath}':
     post:
       description: uploads a file to the network from the local filesystem.
@@ -2518,6 +2517,92 @@ paths:
           in: query
           description: >-
             Location on disk of the file being uploaded.
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter/backup:
+    get:
+      description: Lists backups.
+      tags:
+        - Renter
+      parameters:
+        - name: host
+          type: string
+          in: query
+          description: >-
+            if requested, fetch the backups stored on a specific host
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              backups:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    creationdate:
+                      type: integer
+                    size:
+                      type: integer
+                      format: int64
+                    uploadprogress:
+                      type: number
+              syncedhosts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    algorithm:
+                      type: string
+                    key:
+                      type: string
+              unsyncedhosts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    algorithm:
+                      type: string
+                    key:
+                      type: string
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter/backups/create:
+    post:
+      description: Creates a backup of all siafiles.
+      tags:
+        - Renter
+      parameters:
+        - name: name
+          type: string
+          in: query
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter/backups/restore:
+    post:
+      description: Restores siafiles from a backup.
+      tags:
+        - Renter
+      parameters:
+        - name: name
+          type: string
+          in: query
           required: true
       responses:
         '204':
