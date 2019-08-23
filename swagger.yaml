@@ -1975,6 +1975,132 @@ paths:
           description: Error Response
           schema:
             $ref: '#/definitions/StandardError'
+  /renter/dir/{siapath}:
+    get:
+      description: retrieves the contents of a directory on the sia network
+      tags:
+        - Renter
+      parameters:
+        - name: siapath
+          description: Location of the file in the renter on the network.
+          in: path
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              directories:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    aggregatenumfiles:
+                      type: integer
+                      format: int64
+                      description: >-
+                        the total number of files in the sub directory tree
+                      example: 2
+                    aggregatenumstuckchunks:
+                      type: integer
+                      format: int64
+                      description: >-
+                        the total number of stuck chunks in the sub directory tree
+                      example: 4
+                    aggregatenumsize:
+                      type: integer
+                      format: int64
+                      example: 4096
+                    health:
+                      type: number
+                      description: >-
+                        This is the worst health of any of the files or subdirectories.
+                        Health is the percent of parity pieces missing.
+                        - health = 0 is full redundancy
+                        - health <= 1 is recoverable
+                        - health > 1 needs to be repaired from disk
+                      example: 1.0
+                    lasthealthchecktime:
+                      type: string
+                      format: date-time
+                      description: >-
+                        The oldest time that the health of the directory
+                        or any of its files or sub directories' health was checked.
+                      example: 2018-09-23T08:00:00.000000000+04:00
+                    maxhealth:
+                      type: number
+                      description: >-
+                        This is the worst health when comparing stuck health vs health
+                      example: 0.5
+                    minredundancy:
+                      type: number
+                      description: >-
+                        the lowest redundancy of any file or directory in the sub directory tree
+                      example: 2.6
+                    mostrecentmodtime:
+                      type: string
+                      format: date-time
+                      description: >-
+                        the most recent mod time of any file or directory in the sub directory tree
+                      example: 2018-09-23T08:00:00.000000000+04:00
+                    numfiles:
+                      type: integer
+                      format: int64
+                      description: >-
+                        the number of files in the directory
+                      example: 3
+                    numsubdirs:
+                      type: integer
+                      format: int64
+                      description: >-
+                        the number of directories in the directory
+                      example: 2
+                    siapath:
+                      type: string
+                      description: >-
+                        The path to the directory on the sia network
+                      example: foo/bar
+              files:
+                type: array
+                items:
+                  $ref: "#/definitions/FileInfo"
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+    post:
+      description: performs various functions on the renter's directories
+      tags:
+        - Renter
+      parameters:
+        - name: siapath
+          description: Location of the file in the renter on the network.
+          in: path
+          type: string
+          required: true
+        - name: action
+          description: >-
+            Action can be either create or delete.
+             - create will create an empty directory on the sia network
+             - delete will remove a directory and its contents from the sia network
+             - rename will rename a directory on the sia network
+          in: query
+          type: string
+          required: true
+        - name: newsiapath
+          description: >-
+            The new siapath of the renamed folder. Only required for the rename action.
+            Location of the file in the renter on the network.
+          in: query
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
   /renter/downloads:
     get:
       description: lists all files in the download queue.
