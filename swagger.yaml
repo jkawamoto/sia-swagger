@@ -1521,6 +1521,39 @@ paths:
           description: Error Response
           schema:
             $ref: '#/definitions/StandardError'
+  /daemon/update:
+    get:
+      tags:
+        - Daemon
+      description: returns the the status of any updates available for the daemon
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              available:
+                type: boolean
+                example: false
+                description: Available indicates whether or not there is an update available for the daemon.
+              version:
+                type: string
+                example: "1.4.0"
+                description: Version is the version of the latest release.
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+    post:
+      tags:
+        - Daemon
+      description: updates the daemon to the latest available version release.
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
   /daemon/version:
     get:
       tags:
@@ -1975,6 +2008,132 @@ paths:
           description: Error Response
           schema:
             $ref: '#/definitions/StandardError'
+  /renter/dir/{siapath}:
+    get:
+      description: retrieves the contents of a directory on the sia network
+      tags:
+        - Renter
+      parameters:
+        - name: siapath
+          description: Location of the file in the renter on the network.
+          in: path
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              directories:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    aggregatenumfiles:
+                      type: integer
+                      format: int64
+                      description: >-
+                        the total number of files in the sub directory tree
+                      example: 2
+                    aggregatenumstuckchunks:
+                      type: integer
+                      format: int64
+                      description: >-
+                        the total number of stuck chunks in the sub directory tree
+                      example: 4
+                    aggregatenumsize:
+                      type: integer
+                      format: int64
+                      example: 4096
+                    health:
+                      type: number
+                      description: >-
+                        This is the worst health of any of the files or subdirectories.
+                        Health is the percent of parity pieces missing.
+                        - health = 0 is full redundancy
+                        - health <= 1 is recoverable
+                        - health > 1 needs to be repaired from disk
+                      example: 1.0
+                    lasthealthchecktime:
+                      type: string
+                      format: date-time
+                      description: >-
+                        The oldest time that the health of the directory
+                        or any of its files or sub directories' health was checked.
+                      example: 2018-09-23T08:00:00.000000000+04:00
+                    maxhealth:
+                      type: number
+                      description: >-
+                        This is the worst health when comparing stuck health vs health
+                      example: 0.5
+                    minredundancy:
+                      type: number
+                      description: >-
+                        the lowest redundancy of any file or directory in the sub directory tree
+                      example: 2.6
+                    mostrecentmodtime:
+                      type: string
+                      format: date-time
+                      description: >-
+                        the most recent mod time of any file or directory in the sub directory tree
+                      example: 2018-09-23T08:00:00.000000000+04:00
+                    numfiles:
+                      type: integer
+                      format: int64
+                      description: >-
+                        the number of files in the directory
+                      example: 3
+                    numsubdirs:
+                      type: integer
+                      format: int64
+                      description: >-
+                        the number of directories in the directory
+                      example: 2
+                    siapath:
+                      type: string
+                      description: >-
+                        The path to the directory on the sia network
+                      example: foo/bar
+              files:
+                type: array
+                items:
+                  $ref: "#/definitions/FileInfo"
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+    post:
+      description: performs various functions on the renter's directories
+      tags:
+        - Renter
+      parameters:
+        - name: siapath
+          description: Location of the file in the renter on the network.
+          in: path
+          type: string
+          required: true
+        - name: action
+          description: >-
+            Action can be either create or delete.
+             - create will create an empty directory on the sia network
+             - delete will remove a directory and its contents from the sia network
+             - rename will rename a directory on the sia network
+          in: query
+          type: string
+          required: true
+        - name: newsiapath
+          description: >-
+            The new siapath of the renamed folder. Only required for the rename action.
+            Location of the file in the renter on the network.
+          in: query
+          type: string
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
   /renter/downloads:
     get:
       description: lists all files in the download queue.
@@ -2064,6 +2223,36 @@ paths:
                         will eventually include data transferred during contract + payment
                         negotiation, as well as data from failed piece downloads.
                       example: 10321
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter/downloads/clear:
+    post:
+      description: >-
+        Clears the download history of the renter for a range of unix time stamps.
+        Both parameters are optional, if no parameters are provided,
+        the entire download history will be cleared. To clear a single download,
+        provide the timestamp for the download as both parameters.
+        Providing only the before parameter will clear all downloads older than
+        the timestamp. Conversely, providing only the after parameter will clear
+        all downloads newer than the timestamp.
+      tags:
+        - Renter
+      parameters:
+        - name: before
+          description: unix timestamp found in the download history
+          in: query
+          type: integer
+          format: int64
+        - name: after
+          description: unix timestamp found in the download history
+          in: query
+          type: integer
+          format: int64
+      responses:
+        '204':
+          description: Successful Response
         default:
           description: Error Response
           schema:
@@ -2295,7 +2484,6 @@ paths:
           description: Error Response
           schema:
             $ref: '#/definitions/StandardError'
-
   '/renter/upload/{siapath}':
     post:
       description: uploads a file to the network from the local filesystem.
@@ -2329,6 +2517,92 @@ paths:
           in: query
           description: >-
             Location on disk of the file being uploaded.
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter/backup:
+    get:
+      description: Lists backups.
+      tags:
+        - Renter
+      parameters:
+        - name: host
+          type: string
+          in: query
+          description: >-
+            if requested, fetch the backups stored on a specific host
+      responses:
+        '200':
+          description: Successful Response
+          schema:
+            properties:
+              backups:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    creationdate:
+                      type: integer
+                    size:
+                      type: integer
+                      format: int64
+                    uploadprogress:
+                      type: number
+              syncedhosts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    algorithm:
+                      type: string
+                    key:
+                      type: string
+              unsyncedhosts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    algorithm:
+                      type: string
+                    key:
+                      type: string
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter/backups/create:
+    post:
+      description: Creates a backup of all siafiles.
+      tags:
+        - Renter
+      parameters:
+        - name: name
+          type: string
+          in: query
+          required: true
+      responses:
+        '204':
+          description: Successful Response
+        default:
+          description: Error Response
+          schema:
+            $ref: '#/definitions/StandardError'
+  /renter/backups/restore:
+    post:
+      description: Restores siafiles from a backup.
+      tags:
+        - Renter
+      parameters:
+        - name: name
+          type: string
+          in: query
           required: true
       responses:
         '204':
@@ -3318,6 +3592,8 @@ definitions:
       accesstime:
         type: string
         format: date-time
+        description: >-
+          indicates the last time the siafile was accessed
         example: 2019-03-09T00:53:31.122129328Z
       available:
         type: boolean
@@ -3328,13 +3604,19 @@ definitions:
       changetime:
         type: string
         format: date-time
+        description: >-
+          indicates the last time the siafile metadata was updated
         example: 2019-03-09T00:53:31.122129328Z
       ciphertype:
         type: string
+        description: >-
+          indicates the encryption used for the siafile
         example: threefish512
       createtime:
         type: string
         format: date-time
+        description: >-
+          indicates when the siafile was created
         example: 2019-03-08T13:18:49.47866608Z
       expiration:
         type: integer
@@ -3350,6 +3632,10 @@ definitions:
         example: 8192
       health:
         type: number
+        description: >-
+          health is an indication of the amount of redundancy missing
+          where 0 is full redundancy and >1 means the file is not available.
+          The health of the siafile is the health of the worst unstuck chunk.
         example: 0.19
       localpath:
         type: string
@@ -3358,17 +3644,28 @@ definitions:
         example: "/home/foo/bar.txt"
       maxhealth:
         type: number
+        description: >-
+           the maxhealth is either the health or the stuckhealth of the siafile,
+           whichever is worst
         example: 0.25
       maxhealthpercent:
         type: number
+        description: >-
+          maxhealthpercent is the maxhealth converted to be out of 100%
+          to be more easily understood
         example: 83.3334
       modtime:
         type: string
         format: date-time
+        description: >-
+          indicates the last time the siafile contents where modified
         example: 2019-03-09T00:53:31.122129328Z
       numstuckchunks:
         type: integer
         format: int64
+        description: >-
+          indicates the number of stuck chunks in a file.
+          A chunk is stuck if it cannot reach full redundancy
         example: 2
       ondisk:
         type: boolean
@@ -3401,9 +3698,14 @@ definitions:
         example: "foo/bar.txt"
       stuck:
         type: boolean
+        description: >-
+          a file is stuck if there are any stuck chunks in the file,
+          which means the file cannot reach full redundancy
         example: true
       stuckhealth:
         type: number
+        description: >-
+          stuckhealth is the worst health of any of the stuck chunks.
         example: 0.25
       uploadedbytes:
         type: integer
