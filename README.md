@@ -7,4 +7,4 @@
 This API specification was originally provided by [Anthony](https://github.com/antgeo) under the MIT License.
 
 ## Reference
-- [Siad API document](https://gitlab.com/NebulousLabs/Sia/blob/master/doc/API.md)
+- [Siad API document](https://sia.tech/docs/)
