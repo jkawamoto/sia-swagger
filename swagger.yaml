@@ -3587,14 +3587,16 @@ definitions:
                     format: date-time
                     example: 2018-09-23T08:00:00.000000000+04:00
             historicfailedinteractions:
-              type: integer
-              format: int64
+              # type: integer
+              # format: int64
+              type: number
               description: >-
                 Number of historic failed interactions with the host.
               example: 0
             historicsuccessfulinteractions:
-              type: integer
-              format: int64
+              # type: integer
+              # format: int64
+              type: number
               description: >-
                 Number of historic successful interactions with the host.
               example: 5
