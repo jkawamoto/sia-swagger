@@ -3503,15 +3503,136 @@ definitions:
                 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab
             windowsize:
               type: integer
-              description: >
+              description: >-
                 A storage proof window is the number of blocks that the host has
-                to
-
-                get a storage proof onto the blockchain. The window size is the
-
+                to get a storage proof onto the blockchain. The window size is the
                 minimum size of window that the host will accept in a file
                 contract.
               example: 144
+            collateral:
+              type: string
+              description: >-
+                The maximum amount of money that the host will put up as collateral
+                for storage that is contracted by the renter.
+              example: "20000000000"
+            maxcollateral:
+              type: string
+              description: >-
+                The maximum amount of collateral that the host will put into a single file contract.
+              example: "1000000000000000000000000000"
+            contractprice:
+              type: string
+              description: >-
+                The price that a renter has to pay to create a contract with the host.
+                The payment is intended to cover transaction fees for the file contract revision
+                and the storage proof that the host will be submitting to the blockchain.
+              example: "1000000000000000000000000"
+            downloadbandwidthprice:
+              type: string
+              description: >-
+                The price that a renter has to pay when downloading data from the host.
+              example: "35000000000000"
+            storageprice:
+              type: string
+              description: >-
+                The price that a renter has to pay to store files with the host.
+              example: "14000000000"
+            uploadbandwidthprice:
+              type: string
+              description: >-
+                The price that a renter has to pay when uploading data to the host.
+            revisionnumber:
+              type: integer
+              format: int64
+              description: >-
+                The revision number indicates to the renter what iteration of settings the host is currently at.
+                Settings are generally signed. If the renter has multiple conflicting copies of settings from the host,
+                the renter can expect the one with the higher revision number to be more recent.
+              example: 12733798
+            version:
+              type: string
+              description: >-
+                The version of the host.
+              example: "1.3.4"
+            firstseen:
+              type: integer
+              format: int64
+              description: >-
+                Firstseen is the last block height at which this host was announced.
+              example: 160000
+            historicdowntime:
+              type: integer
+              format: int64
+              description: >-
+                Total amount of time the host has been offline in nanosecounds.
+              example: 0
+            historicuptime:
+              type: integer
+              format: int64
+              description: >-
+                Total amount of time the host has been online in nanosecounds.
+              example: 41634520900246576
+            scanhistory:
+              type: array
+              description: >-
+                Measurements that have been taken on the host. The most recent measurements are kept in full detail.
+              items:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: 2018-09-23T08:00:00.000000000+04:00
+            historicfailedinteractions:
+              type: integer
+              format: int64
+              description: >-
+                Number of historic failed interactions with the host.
+              example: 0
+            historicsuccessfulinteractions:
+              type: integer
+              format: int64
+              description: >-
+                Number of historic successful interactions with the host.
+              example: 5
+            recentfailedinteractions:
+              type: integer
+              format: int64
+              description: >-
+                Number of recent failed interactions with the host.
+              example: 0
+            recentsuccessfulinteractions:
+              type: integer
+              format: int64
+              description: >-
+                Number of recent successful interactions with the host.
+              example: 0
+            lasthistoricupdate:
+              type: integer
+              format: int64
+              description: >-
+                The last time that the interactions within scanhistory have been compressed into the historic ones.
+              example: 174900
+            ipnets:
+              type: array
+              description: >-
+                List of IP subnet masks used by the host. For IPv4 the /24 and for IPv6 the /54 subnet mask is used.
+                A host can have either one IPv4 or one IPv6 subnet or one of each.
+                E.g. these lists are valid: [ "IPv4" ], [ "IPv6" ] or [ "IPv4", "IPv6" ].
+                The following lists are invalid: [ "IPv4", "IPv4" ], [ "IPv4", "IPv6", "IPv6" ]. Hosts with an invalid list are ignored.
+              items:
+                type: string
+                example: "1.2.3.0"
+            lastipnetchange:
+              type: string
+              format: date-time
+              description: >-
+                The last time the list of IP subnet masks was updated.
+                When equal subnet masks are found for different hosts, the host that occupies the subnet mask for a longer time is preferred.
+              example: "2015-01-01T08:00:00.000000000+04:00"
             publickey:
               type: object
               description: Public key used to identify and verify hosts.
@@ -3526,6 +3647,17 @@ definitions:
                   type: string
                   description: Key used to verify signed host messages.
                   example: RW50cm9weSBpc24ndCB3aGF0IGl0IHVzZWQgdG8gYmU=
+
+            publickeystring:
+              type: string
+              description: >-
+                The string representation of the full public key, used when calling /hostdb/hosts.
+              example: ed25519:1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+            filtered:
+              type: boolean
+              description: >-
+                Indicates if the host is currently being filtered from the HostDB
+              example: false
   StandardError:
     properties:
       message:
